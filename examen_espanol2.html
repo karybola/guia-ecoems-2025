@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Habilidad Verbal</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+        
+        .reading-passage {
+            background-color: #eef2f5;
+            padding: 15px;
+            border-left: 4px solid var(--color-acento);
+            margin-bottom: 20px;
+            font-style: italic;
+            border-radius: 5px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Habilidad Verbal</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Habilidad Verbal se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Sinónimos
+            { question: "Elige el SINÓNIMO de la palabra 'esotérico'.", options: ["Público", "Conocido", "Oculto", "Evidente"], correct: "Oculto", justification: "'Esotérico' se refiere a algo oculto, reservado para un grupo selecto de iniciados. Su sinónimo directo es 'oculto'." },
+            { question: "Selecciona el SINÓNIMO de 'dilapidar'.", options: ["Ahorrar", "Acumular", "Invertir", "Malgastar"], correct: "Malgastar", justification: "'Dilapidar' significa gastar algo (generalmente dinero o bienes) de forma excesiva y sin control. 'Malgastar' es el sinónimo más adecuado." },
+            { question: "El SINÓNIMO de 'gregario' es:", options: ["Solitario", "Social", "Ermitaño", "Individualista"], correct: "Social", justification: "Una persona 'gregaria' es aquella que tiende a vivir en grupo o que disfruta de la compañía de otros. 'Social' es el término que mejor lo define." },
+            { question: "Un SINÓNIMO de 'insigne' es:", options: ["Común", "Desconocido", "Célebre", "Ordinario"], correct: "Célebre", justification: "'Insigne' se aplica a alguien o algo que es famoso, ilustre y destacado por sus méritos. 'Célebre' comparte este significado." },
+            { question: "Elige el SINÓNIMO de 'dirimir'.", options: ["Crear", "Resolver", "Complicar", "Ignorar"], correct: "Resolver", justification: "'Dirimir' significa resolver o poner fin a una disputa, desacuerdo o discusión. 'Resolver' es un sinónimo directo." },
+
+            // Antónimos
+            { question: "Elige el ANTÓNIMO de 'banal'.", options: ["Superficial", "Trivial", "Trascendental", "Insustancial"], correct: "Trascendental", justification: "'Banal' se refiere a algo sin importancia o profundidad. Su antónimo es 'trascendental', que significa de gran importancia o que va más allá de lo común." },
+            { question: "Selecciona el ANTÓNIMO de 'opulencia'.", options: ["Riqueza", "Abundancia", "Miseria", "Lujo"], correct: "Miseria", justification: "'Opulencia' es sinónimo de gran riqueza y abundancia. 'Miseria' es su opuesto, indicando pobreza extrema." },
+            { question: "El ANTÓNIMO de 'altruismo' es:", options: ["Generosidad", "Filantropía", "Egoísmo", "Solidaridad"], correct: "Egoísmo", justification: "El 'altruismo' es la preocupación o atención desinteresada por el otro. El 'egoísmo' es la actitud de quien antepone el interés propio al ajeno, siendo su antónimo." },
+            { question: "Un ANTÓNIMO de 'prolijo' es:", options: ["Extenso", "Detallado", "Conciso", "Minucioso"], correct: "Conciso", justification: "'Prolijo' describe algo o a alguien que se excede en detalles, siendo demasiado largo. 'Conciso' significa breve y preciso, justo lo contrario." },
+            { question: "Elige el ANTÓNIMO de 'consenso'.", options: ["Acuerdo", "Disenso", "Pacto", "Unanimidad"], correct: "Disenso", justification: "'Consenso' es un acuerdo o conformidad entre varias personas. 'Disenso' es la falta de acuerdo o disentimiento." },
+
+            // Analogías
+            { question: "PÁGINA es a LIBRO como FACHADA es a:", options: ["Pintura", "Ventana", "Edificio", "Puerta"], correct: "Edificio", justification: "Una página es una parte externa y fundamental de un libro. Una fachada es la parte externa y principal de un edificio." },
+            { question: "HAMBRE es a COMER como CANSANCIO es a:", options: ["Dormir", "Energía", "Sueño", "Correr"], correct: "Dormir", justification: "La analogía es de una necesidad o estado a la acción que lo remedia. El hambre se satisface al comer; el cansancio se remedia al dormir." },
+            { question: "PINTOR es a PINCEL como ESCULTOR es a:", options: ["Mármol", "Cincel", "Estatua", "Museo"], correct: "Cincel", justification: "La analogía es de artista a su herramienta principal de trabajo. El pintor usa un pincel; el escultor usa un cincel." },
+            { question: "TRIGO es a PAN como UVA es a:", options: ["Vino", "Fruta", "Racimo", "Jugo"], correct: "Vino", justification: "La analogía es de materia prima a producto elaborado principal. Del trigo se hace el pan; de la uva se hace el vino." },
+            { question: "LEYES es a ABOGADO como BISTURÍ es a:", options: ["Hospital", "Paciente", "Cirujano", "Enfermedad"], correct: "Cirujano", justification: "La analogía es de objeto de conocimiento/herramienta a profesional que la utiliza. Las leyes son el campo del abogado; el bisturí es la herramienta del cirujano." },
+
+            // Comprensión Lectora 1
+            { 
+                type: 'reading',
+                passage: "Lee el siguiente texto y responde las preguntas 16 a 19.\n\nLa inteligencia artificial (IA) generativa, como los modelos de lenguaje grandes (LLM), ha experimentado un avance exponencial en los últimos años. A diferencia de la IA tradicional, que se especializa en tareas analíticas o de clasificación, la IA generativa es capaz de crear contenido nuevo y original, como texto, imágenes, música o código. Este potencial creativo se basa en el aprendizaje a partir de inmensas cantidades de datos, de los cuales extrae patrones y estructuras. Sin embargo, su desarrollo plantea dilemas éticos significativos. La facilidad para generar 'deepfakes' o desinformación masiva, los sesgos heredados de los datos de entrenamiento y el impacto en el mercado laboral son preocupaciones que requieren una regulación cuidadosa y un debate social profundo para asegurar que su implementación sea beneficiosa para la humanidad.",
+                question: "¿Cuál es la diferencia principal entre la IA tradicional y la IA generativa según el texto?",
+                options: ["La IA generativa es más rápida.", "La IA tradicional es más creativa.", "La IA generativa crea contenido nuevo, mientras que la tradicional analiza o clasifica.", "La IA generativa no utiliza datos para aprender."],
+                correct: "La IA generativa crea contenido nuevo, mientras que la tradicional analiza o clasifica.",
+                justification: "El texto establece esta distinción claramente: 'A diferencia de la IA tradicional... la IA generativa es capaz de crear contenido nuevo y original'."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto de la IA.",
+                question: "Según el texto, uno de los dilemas éticos de la IA generativa es:",
+                options: ["Su capacidad para aprender de grandes cantidades de datos.", "Su potencial para generar desinformación a gran escala.", "Su habilidad para crear música y código.", "Su avance exponencial en los últimos años."],
+                correct: "Su potencial para generar desinformación a gran escala.",
+                justification: "El texto menciona explícitamente entre los dilemas éticos 'la facilidad para generar 'deepfakes' o desinformación masiva'."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto de la IA.",
+                question: "¿Qué se puede inferir sobre la postura del autor respecto a la IA generativa?",
+                options: ["Es completamente optimista y no ve riesgos.", "Cree que debería prohibirse por completo.", "Reconoce su gran potencial, pero aboga por una regulación y un debate ético.", "Considera que su impacto en el empleo es el único problema real."],
+                correct: "Reconoce su gran potencial, pero aboga por una regulación y un debate ético.",
+                justification: "El autor menciona tanto el 'avance exponencial' y el 'potencial creativo' como los 'dilemas éticos', concluyendo que se necesita 'regulación cuidadosa y un debate social profundo'."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto de la IA.",
+                question: "En el texto, la palabra 'exponencial' en la frase 'ha experimentado un avance exponencial' significa que el avance ha sido:",
+                options: ["Lento y gradual.", "Constante y predecible.", "Extremadamente rápido y acelerado.", "Experimental y poco claro."],
+                correct: "Extremadamente rápido y acelerado.",
+                justification: "En este contexto, 'exponencial' se usa para describir un crecimiento que es cada vez más rápido a lo largo del tiempo, de forma muy acelerada."
+            },
+
+            // Completar Oraciones
+            { question: "A pesar de sus esfuerzos, no logró su objetivo; ___, no se dio por vencido.", options: ["es decir", "por lo tanto", "sin embargo", "porque"], correct: "sin embargo", justification: "El conector 'sin embargo' introduce un contraste o una idea opuesta. No lograr el objetivo podría llevar a rendirse, pero el personaje hizo lo contrario." },
+            { question: "La situación era muy grave, ___ todos mantuvieron la calma.", options: ["así que", "no obstante", "por consiguiente", "ya que"], correct: "no obstante", justification: "'No obstante' es un conector adversativo, similar a 'sin embargo', que contrasta la gravedad de la situación con la calma de las personas." },
+            { question: "___ su gran inteligencia, a veces comete errores muy simples.", options: ["Debido a", "Pese a", "Gracias a", "Conforme a"], correct: "Pese a", justification: "'Pese a' introduce un obstáculo o una objeción que no impide que ocurra lo expresado en la oración principal, creando un contraste." },
+            { question: "Leía con dificultad, ___ la letra era muy pequeña.", options: ["a pesar de que", "ya que", "no obstante", "en cambio"], correct: "ya que", justification: "El conector 'ya que' introduce una causa o explicación. La dificultad para leer es causada por el tamaño de la letra." },
+            { question: "No solo es un gran atleta, ___ también un excelente estudiante.", options: ["pero", "sino que", "aunque", "mas"], correct: "sino que", justification: "La estructura 'no solo..., sino que también...' se usa para añadir información que refuerza o amplía la primera idea." },
+            
+            // Comprensión Lectora 2
+            { 
+                type: 'reading',
+                passage: "Lee el siguiente texto y responde las preguntas 25 a 28.\n\nEl estoicismo, una escuela filosófica fundada en Atenas por Zenón de Citio en el siglo III a. C., propone que el camino hacia la felicidad o eudaimonia se encuentra en la aceptación del momento presente. Postula que no podemos controlar los eventos externos, que son regidos por el logos o la razón universal, pero sí podemos controlar nuestras respuestas y juicios sobre ellos. La clave, según los estoicos como Séneca, Epicteto y Marco Aurelio, reside en vivir de acuerdo con la naturaleza, desarrollando la virtud, la razón y la autodisciplina. La práctica del estoicismo implica diferenciar entre lo que está en nuestro poder (nuestros pensamientos, opiniones y acciones) y lo que no lo está (la salud, la riqueza, la reputación y las acciones de los demás). Al enfocarnos únicamente en lo primero, alcanzamos la ataraxia, un estado de serenidad y paz mental libre de perturbaciones.",
+                question: "¿Cuál es el objetivo principal de la filosofía estoica según el texto?",
+                options: ["Controlar todos los eventos externos.", "Acumular riqueza y reputación.", "Alcanzar un estado de serenidad aceptando lo que no se puede cambiar.", "Ignorar por completo las acciones de los demás."],
+                correct: "Alcanzar un estado de serenidad aceptando lo que no se puede cambiar.",
+                justification: "El texto afirma que el camino a la felicidad es la 'aceptación del momento presente' y que al enfocarse en lo que uno puede controlar, se alcanza la 'ataraxia', un estado de serenidad."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto del estoicismo.",
+                question: "Para un estoico, ¿cuál de los siguientes elementos está bajo nuestro control?",
+                options: ["Una enfermedad inesperada.", "La opinión que un amigo tiene de nosotros.", "Nuestra reacción ante un insulto.", "Ganar la lotería."],
+                correct: "Nuestra reacción ante un insulto.",
+                justification: "El texto especifica que lo que está en nuestro poder son 'nuestros pensamientos, opiniones y acciones', y nuestra reacción es una combinación de estas tres cosas."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto del estoicismo.",
+                question: "El término 'ataraxia' se refiere a:",
+                options: ["Un estado de felicidad extrema y euforia.", "La razón universal que rige el cosmos.", "La práctica de la autodisciplina y la virtud.", "Una paz mental libre de pasiones y perturbaciones."],
+                correct: "Una paz mental libre de pasiones y perturbaciones.",
+                justification: "El texto define 'ataraxia' explícitamente como 'un estado de serenidad y paz mental libre de perturbaciones'."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto del estoicismo.",
+                question: "Vivir 'de acuerdo con la naturaleza', en el contexto estoico, significa:",
+                options: ["Vivir en el campo, lejos de la ciudad.", "Actuar de manera racional y virtuosa.", "Seguir los instintos animales.", "Dejarse llevar por las emociones."],
+                correct: "Actuar de manera racional y virtuosa.",
+                justification: "El texto asocia 'vivir de acuerdo con la naturaleza' con 'desarrollando la virtud, la razón y la autodisciplina', lo que implica una vida guiada por la razón humana, no por el instinto."
+            },
+            
+            // Más Preguntas Variadas para llegar a 40
+            { question: "Identifica la opción donde la palabra 'agudo' tiene un significado denotativo (literal).", options: ["Tiene un agudo sentido del humor.", "Sufrió un dolor agudo en el pecho.", "Es una persona muy aguda para los negocios.", "Hizo un comentario muy agudo."], correct: "Sufrió un dolor agudo en el pecho.", justification: "El significado denotativo o literal de 'agudo' se refiere a algo punzante o intenso físicamente. En las otras opciones, se usa de forma connotativa (figurada) para significar 'ingenioso' o 'perspicaz'." },
+            { question: "La frase 'El tiempo es oro' es un ejemplo de:", options: ["Símil", "Hipérbole", "Metáfora", "Paradoja"], correct: "Metáfora", justification: "Es una metáfora que identifica directamente el 'tiempo' con el 'oro' para resaltar su valor, sin usar un nexo comparativo como 'como'." },
+            { question: "Ordena las frases para formar un párrafo coherente: (1) Esta condensación forma las nubes. (2) El ciclo comienza cuando el sol calienta el agua de los océanos. (3) Finalmente, el agua regresa a la Tierra en forma de precipitación. (4) El vapor de agua se eleva y se enfría.", options: ["2, 4, 1, 3", "1, 2, 4, 3", "4, 1, 3, 2", "2, 3, 1, 4"], correct: "2, 4, 1, 3", justification: "La secuencia lógica del ciclo del agua es: calentamiento del agua (2), evaporación y enfriamiento (4), condensación en nubes (1) y precipitación (3)." },
+            { question: "Cuando un autor presenta los hechos sin incluir sus opiniones o sentimientos personales, se dice que el texto es:", options: ["Subjetivo", "Objetivo", "Literario", "Personal"], correct: "Objetivo", justification: "La objetividad es la cualidad de un texto que se basa en hechos comprobables y evita la influencia de las emociones o puntos de vista del autor." },
+            { question: "Elige la opción que presenta una idea principal y no una secundaria.", options: ["Por ejemplo, los leones son carnívoros.", "Además, la fotosíntesis requiere luz solar.", "En resumen, la deforestación tiene graves consecuencias ecológicas.", "El guepardo, un tipo de felino, es muy veloz."], correct: "En resumen, la deforestación tiene graves consecuencias ecológicas.", justification: "Las otras opciones introducen ejemplos ('por ejemplo'), ideas adicionales ('además') o detalles específicos. La opción correcta sintetiza la idea central y conclusiva de un posible texto." },
+            { question: "Un texto cuyo propósito es guiar al lector para realizar una tarea paso a paso es un texto:", options: ["Expositivo", "Argumentativo", "Instructivo", "Narrativo"], correct: "Instructivo", justification: "Los textos instructivos, como las recetas de cocina o los manuales de usuario, tienen como finalidad principal dar instrucciones claras para que el lector realice una acción." },
+            { question: "La palabra 'idiosincrasia' se refiere a:", options: ["Una enfermedad del sistema nervioso.", "Un error gramatical común.", "Los rasgos de carácter propios de un individuo o grupo.", "Una idea fija u obsesión."], correct: "Los rasgos de carácter propios de un individuo o grupo.", justification: "La idiosincrasia es el conjunto de rasgos, temperamento y carácter que son distintivos y propios de una persona o de una colectividad." },
+            { question: "Elige la opción con el antónimo contextual correcto para la palabra en mayúsculas: 'Su discurso fue muy SUCINTO'.", options: ["Breve", "Directo", "Extenso", "Claro"], correct: "Extenso", justification: "'Sucinto' significa breve, compendioso y preciso. Su antónimo en este contexto sería 'extenso' o 'prolijo'." },
+            { question: "La relación entre 'TERREMOTO' y 'DESTRUCCIÓN' es de:", options: ["Objeto a característica", "Causa a efecto", "Parte a todo", "Sinonimia"], correct: "Causa a efecto", justification: "Un terremoto (la causa) provoca o tiene como consecuencia la destrucción (el efecto)." },
+            { question: "Selecciona el enunciado que expresa una opinión, no un hecho.", options: ["El agua hierve a 100 grados Celsius a nivel del mar.", "México se encuentra en el continente americano.", "La película que vimos ayer fue la más aburrida del año.", "La Tierra gira alrededor del Sol."], correct: "La película que vimos ayer fue la más aburrida del año.", justification: "Calificar una película como 'aburrida' es un juicio de valor personal (una opinión). Los otros enunciados son hechos verificables y objetivos." },
+            { question: "ANARQUÍA es a GOBIERNO como:", options: ["Monarquía es a Rey", "Caos es a Orden", "Paz es a Guerra", "Luz es a Oscuridad"], correct: "Caos es a Orden", justification: "Anarquía es la ausencia de gobierno, lo que a menudo implica desorden. La analogía es de ausencia de un principio regulador a su consecuencia. De forma similar, el caos es la ausencia de orden." },
+            { question: "Elige el SINÓNIMO de 'inefable'.", options: ["Indescriptible", "Predecible", "Común", "Soportable"], correct: "Indescriptible", justification: "Algo 'inefable' es aquello que no se puede explicar o describir con palabras, generalmente por su belleza, complejidad o magnitud. 'Indescriptible' es su sinónimo más cercano." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                let lastPassage = "";
+
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    if(q.type === 'reading' && q.passage !== lastPassage) {
+                        const passageDiv = document.createElement('div');
+                        passageDiv.className = 'reading-passage';
+                        passageDiv.innerText = q.passage.split('\n\n')[0];
+                        questionBlock.appendChild(passageDiv);
+                        lastPassage = q.passage;
+                    }
+
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

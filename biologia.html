@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Biología</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Biología</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Biología se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Célula y Metabolismo
+            { question: "Organelo celular encargado de la respiración celular y la producción de energía (ATP).", options: ["Núcleo", "Ribosoma", "Mitocondria", "Cloroplasto"], correct: "Mitocondria", justification: "La mitocondria es conocida como la 'central energética' de la célula, ya que en ella se lleva a cabo la respiración celular, proceso que convierte la glucosa en ATP (energía)." },
+            { question: "La fotosíntesis es un proceso que realizan las plantas para convertir la energía lumínica en energía química, produciendo:", options: ["Agua y dióxido de carbono", "Glucosa y oxígeno", "ATP y calor", "Sales minerales y agua"], correct: "Glucosa y oxígeno", justification: "En la fotosíntesis, las plantas usan dióxido de carbono, agua y luz solar para sintetizar glucosa (su alimento) y liberan oxígeno como subproducto." },
+            { question: "Estructura que delimita la célula y regula el intercambio de sustancias entre el interior y el exterior celular.", options: ["Pared celular", "Citoplasma", "Núcleo", "Membrana plasmática"], correct: "Membrana plasmática", justification: "La membrana plasmática o celular es una barrera semipermeable presente en todas las células, que controla qué entra y qué sale de ellas." },
+            { question: "Una diferencia fundamental entre las células procariotas y las eucariotas es que las procariotas:", options: ["Tienen núcleo definido.", "Carecen de núcleo definido y organelos membranosos.", "Son más grandes y complejas.", "Solo se encuentran en los animales."], correct: "Carecen de núcleo definido y organelos membranosos.", justification: "Las células procariotas (como las bacterias) tienen su material genético disperso en el citoplasma (en una región llamada nucleoide), mientras que las eucariotas (plantas, animales) tienen un núcleo verdadero que lo contiene." },
+            { question: "El conjunto de reacciones químicas que ocurren en la célula para mantener la vida se conoce como:", options: ["Homeostasis", "Metabolismo", "Fotosíntesis", "Respiración"], correct: "Metabolismo", justification: "El metabolismo incluye todos los procesos químicos celulares, divididos en anabolismo (construcción de moléculas) y catabolismo (degradación de moléculas para obtener energía)." },
+            { question: "Son organismos autótrofos aquellos que:", options: ["Se alimentan de otros seres vivos.", "Producen su propio alimento a partir de sustancias inorgánicas.", "Descomponen la materia orgánica muerta.", "Dependen de la luz para moverse."], correct: "Producen su propio alimento a partir de sustancias inorgánicas.", justification: "Los autótrofos, como las plantas, son la base de las cadenas alimenticias. Producen su alimento (ej. mediante fotosíntesis) y no necesitan consumir a otros organismos." },
+            
+            // Genética y Herencia
+            { question: "Molécula que contiene la información genética de los seres vivos, organizada en forma de doble hélice.", options: ["ARN", "ATP", "Proteína", "ADN"], correct: "ADN", justification: "El Ácido Desoxirribonucleico (ADN) es la molécula portadora de las instrucciones genéticas para el desarrollo, funcionamiento y reproducción de todos los organismos vivos." },
+            { question: "Segmento de ADN que contiene la información para fabricar una proteína o una molécula de ARN funcional.", options: ["Cromosoma", "Gen", "Alelo", "Genoma"], correct: "Gen", justification: "Un gen es la unidad básica de la herencia. Es una secuencia específica de nucleótidos en el ADN que codifica para un producto funcional." },
+            { question: "Gregor Mendel es considerado el 'padre de la genética' por sus experimentos con:", options: ["Moscas de la fruta", "Ratones de laboratorio", "Plantas de guisantes", "Bacterias"], correct: "Plantas de guisantes", justification: "Mendel estudió la herencia de siete características diferentes en las plantas de guisantes, lo que le permitió formular las leyes fundamentales de la herencia genética." },
+            { question: "El fenotipo de un organismo se refiere a:", options: ["Su conjunto completo de genes.", "Las características observables, resultado de la interacción de los genes y el ambiente.", "El número de cromosomas que tiene.", "Las mutaciones en su ADN."], correct: "Las características observables, resultado de la interacción de los genes y el ambiente.", justification: "El fenotipo es la expresión física de la información genética (genotipo). Incluye rasgos como el color de ojos, la altura o el tipo de sangre." },
+            { question: "La división celular que produce gametos (óvulos y espermatozoides) con la mitad del número de cromosomas se llama:", options: ["Mitosis", "Meiosis", "Fisión binaria", "Gemación"], correct: "Meiosis", justification: "La meiosis es un tipo de división celular que reduce a la mitad el número de cromosomas para producir células sexuales haploides. Esto es esencial para la reproducción sexual." },
+            { question: "Si un individuo tiene dos alelos idénticos para un gen particular (por ejemplo, AA o aa), se dice que es:", options: ["Heterocigoto", "Haploide", "Dominante", "Homocigoto"], correct: "Homocigoto", justification: "Un organismo es homocigoto para un gen cuando los dos alelos heredados del padre y la madre son iguales. Si son diferentes (Aa), es heterocigoto." },
+            { question: "El conjunto de todos los genes presentes en un organismo o especie se denomina:", options: ["Fenotipo", "Genoma", "Cariotipo", "Proteoma"], correct: "Genoma", justification: "El genoma es la secuencia completa de ADN de un organismo, incluyendo tanto los genes como las regiones no codificantes." },
+
+            // Evolución y Biodiversidad
+            { question: "Teoría propuesta por Charles Darwin y Alfred Russel Wallace que explica cómo evolucionan las especies a través del tiempo.", options: ["Lamarckismo", "Creacionismo", "Selección natural", "Generación espontánea"], correct: "Selección natural", justification: "La teoría de la selección natural postula que los individuos con rasgos heredables que les dan una ventaja de supervivencia y reproducción en un ambiente determinado, tienden a dejar más descendencia, haciendo que esos rasgos se vuelvan más comunes en la población." },
+            { question: "Son evidencias de la evolución de las especies:", options: ["Los fósiles, la anatomía comparada y la biogeografía.", "La astrología, la numerología y la quiromancia.", "Las leyes de la física y la química.", "Los mitos y leyendas de diferentes culturas."], correct: "Los fósiles, la anatomía comparada y la biogeografía.", justification: "El registro fósil, las similitudes anatómicas entre especies (órganos homólogos), la distribución geográfica de los seres vivos y la genética molecular son las principales pruebas que apoyan la teoría de la evolución." },
+            { question: "Una adaptación es:", options: ["Una enfermedad genética.", "Un comportamiento aprendido durante la vida.", "Una característica heredable que aumenta las probabilidades de supervivencia y reproducción de un organismo.", "Un cambio brusco en el ecosistema."], correct: "Una característica heredable que aumenta las probabilidades de supervivencia y reproducción de un organismo.", justification: "Las adaptaciones son rasgos (físicos, fisiológicos o de comportamiento) que han evolucionado por selección natural porque mejoran la adecuación de un organismo a su entorno." },
+            { question: "La biodiversidad se refiere a:", options: ["El número total de individuos en un ecosistema.", "La variedad de vida en la Tierra, a nivel de genes, especies y ecosistemas.", "La cantidad de biomasa de un solo tipo de planta.", "La relación entre depredadores y presas."], correct: "La variedad de vida en la Tierra, a nivel de genes, especies y ecosistemas.", justification: "La biodiversidad o diversidad biológica abarca toda la variabilidad de los seres vivos, desde la diversidad genética dentro de una especie, hasta la diversidad de especies y de ecosistemas." },
+            { question: "Principal causa actual de la pérdida de biodiversidad en el planeta.", options: ["La caída de meteoritos.", "Las erupciones volcánicas.", "La destrucción y fragmentación de hábitats por actividades humanas.", "Los ciclos naturales de glaciación."], correct: "La destrucción y fragmentación de hábitats por actividades humanas.", justification: "La deforestación, la urbanización, la agricultura intensiva y la contaminación son las principales actividades humanas que destruyen los hábitats naturales, llevando a muchas especies a la extinción." },
+            { question: "Los cinco reinos en los que se clasifican los seres vivos son:", options: ["Animalia, Plantae, Fungi, Protista y Monera.", "Vertebrados, Invertebrados, Plantas, Hongos y Bacterias.", "Mamíferos, Aves, Reptiles, Anfibios y Peces.", "Autótrofos, Heterótrofos, Saprófitos, Parásitos y Simbiontes."], correct: "Animalia, Plantae, Fungi, Protista y Monera.", justification: "Es la clasificación más tradicional, propuesta por Whittaker. Monera agrupa a las bacterias (procariotas), Protista a los eucariotas unicelulares, y Fungi, Plantae y Animalia a los eucariotas multicelulares." },
+            
+            // Salud, Nutrición y Enfermedades
+            { question: "Una dieta equilibrada es aquella que:", options: ["Contiene únicamente carbohidratos.", "Excluye por completo las grasas y proteínas.", "Incluye todos los grupos de nutrientes en proporciones adecuadas.", "Se basa solo en el consumo de frutas y verduras."], correct: "Incluye todos los grupos de nutrientes en proporciones adecuadas.", justification: "Una dieta correcta y balanceada debe aportar la energía y los nutrientes necesarios (carbohidratos, lípidos, proteínas, vitaminas y minerales) en las cantidades adecuadas para mantener la salud." },
+            { question: "Son enfermedades de transmisión sexual (ETS) causadas por bacterias:", options: ["SIDA y Herpes", "Sífilis y Gonorrea", "Candidiasis y Tricomoniasis", "Gripe y Sarampión"], correct: "Sífilis y Gonorrea", justification: "La sífilis (causada por Treponema pallidum) y la gonorrea (causada por Neisseria gonorrhoeae) son infecciones bacterianas que se pueden tratar con antibióticos. El SIDA y el herpes son virales." },
+            { question: "Las vacunas funcionan al:", options: ["Matar directamente a todos los virus y bacterias del cuerpo.", "Introducir una forma debilitada o inactiva de un patógeno para que el sistema inmune genere defensas.", "Proporcionar anticuerpos artificiales que duran toda la vida.", "Curar una enfermedad una vez que ya se ha desarrollado."], correct: "Introducir una forma debilitada o inactiva de un patógeno para que el sistema inmune genere defensas.", justification: "Las vacunas 'entrenan' al sistema inmunitario. Al exponerlo a un antígeno (parte del patógeno) inofensivo, el cuerpo produce anticuerpos y células de memoria, preparándolo para una futura infección real." },
+            { question: "La diabetes tipo 1 es una enfermedad en la que el cuerpo no produce suficiente:", options: ["Glucosa", "Adrenalina", "Glucagón", "Insulina"], correct: "Insulina", justification: "La insulina es la hormona que permite que la glucosa entre a las células para ser usada como energía. En la diabetes tipo 1, el sistema inmune destruye las células del páncreas que producen insulina." },
+            { question: "El uso correcto del condón es un método anticonceptivo de barrera que, además, ayuda a prevenir:", options: ["Únicamente embarazos no deseados.", "Infecciones de transmisión sexual (ITS).", "El cáncer de piel.", "Los cambios de humor."], correct: "Infecciones de transmisión sexual (ITS).", justification: "A diferencia de otros métodos anticonceptivos (como los hormonales), los métodos de barrera como el condón son los únicos que ofrecen una doble protección: evitan el embarazo y reducen significativamente el riesgo de contraer ITS." },
+            { question: "La anorexia y la bulimia son ejemplos de:", options: ["Enfermedades infecciosas.", "Trastornos de la conducta alimentaria.", "Alergias comunes.", "Enfermedades genéticas."], correct: "Trastornos de la conducta alimentaria.", justification: "Son enfermedades mentales graves que implican una relación problemática con la comida y una distorsión de la imagen corporal, afectando la salud física y psicológica." },
+
+            // Más Preguntas Variadas
+            { question: "En una cadena alimenticia, los organismos que se alimentan de los productores (plantas) se denominan:", options: ["Descomponedores", "Consumidores primarios", "Consumidores secundarios", "Productores secundarios"], correct: "Consumidores primarios", justification: "Los consumidores primarios son los herbívoros. Se alimentan de los productores (plantas) y, a su vez, sirven de alimento a los consumidores secundarios (carnívoros u omnívoros)." },
+            { question: "El desarrollo sustentable busca satisfacer las necesidades del presente sin:", options: ["Generar ganancias económicas.", "Utilizar tecnología moderna.", "Comprometer la capacidad de las futuras generaciones para satisfacer sus propias necesidades.", "Alterar en lo más mínimo los ecosistemas."], correct: "Comprometer la capacidad de las futuras generaciones para satisfacer sus propias necesidades.", justification: "Esta es la definición clásica de desarrollo sustentable, que busca un equilibrio entre el crecimiento económico, la equidad social y la protección del medio ambiente." },
+            { question: "La relación simbiótica en la que un organismo se beneficia y el otro no se ve afectado ni beneficiado se llama:", options: ["Mutualismo", "Parasitismo", "Comensalismo", "Competencia"], correct: "Comensalismo", justification: "En el comensalismo (+/0), un organismo (el comensal) obtiene un beneficio, mientras que el otro (el huésped) no sufre daño ni se beneficia. Un ejemplo son las rémoras que se adhieren a los tiburones." },
+            { question: "Organelo presente en las células vegetales pero ausente en las animales, que proporciona rigidez y soporte.", options: ["Membrana plasmática", "Mitocondria", "Vacuola central", "Pared celular"], correct: "Pared celular", justification: "La pared celular, compuesta principalmente de celulosa, es una capa rígida externa a la membrana plasmática que da forma y protección a la célula vegetal." },
+            { question: "Proceso mediante el cual un organismo mantiene un ambiente interno estable y constante (ej. temperatura corporal).", options: ["Metabolismo", "Homeostasis", "Adaptación", "Evolución"], correct: "Homeostasis", justification: "La homeostasis es la capacidad de los seres vivos para mantener un equilibrio interno estable, regulando factores como la temperatura, el pH y los niveles de glucosa, a pesar de los cambios en el entorno externo." },
+            { question: "Los ribosomas son los organelos celulares encargados de:", options: ["La digestión celular.", "El almacenamiento de agua.", "La síntesis de proteínas.", "La división celular."], correct: "La síntesis de proteínas.", justification: "Los ribosomas 'leen' las instrucciones del ARN mensajero y ensamblan los aminoácidos para construir las proteínas, siguiendo las indicaciones del código genético." },
+            { question: "La reproducción asexual se caracteriza por:", options: ["La participación de dos progenitores y la combinación de gametos.", "Generar descendientes genéticamente idénticos a un solo progenitor.", "Una alta variabilidad genética en la descendencia.", "Ser un proceso exclusivo de los animales complejos."], correct: "Generar descendientes genéticamente idénticos a un solo progenitor.", justification: "En la reproducción asexual, como la gemación o la fisión binaria, no hay combinación de material genético de dos padres, por lo que los hijos son clones del progenitor." },
+            { question: "La biomolécula orgánica que funciona principalmente como fuente de energía de uso rápido para los seres vivos es:", options: ["Lípidos", "Proteínas", "Ácidos nucleicos", "Carbohidratos"], correct: "Carbohidratos", justification: "Los carbohidratos, como la glucosa, son la principal fuente de energía inmediata para las células. Los lípidos son una reserva de energía a largo plazo." },
+            { question: "El intercambio de gases (oxígeno y dióxido de carbono) en los pulmones ocurre en unas estructuras diminutas llamadas:", options: ["Bronquios", "Tráquea", "Alvéolos", "Faringe"], correct: "Alvéolos", justification: "Los alvéolos son pequeños sacos de aire al final de los bronquiolos donde ocurre la hematosis, el paso de oxígeno de los pulmones a la sangre y de dióxido de carbono de la sangre a los pulmones." },
+            { question: "La principal función del sistema nervioso es:", options: ["Transportar nutrientes y oxígeno.", "Defender al cuerpo de patógenos.", "Coordinar las acciones del cuerpo y transmitir señales entre sus diferentes partes.", "Producir hormonas para regular el crecimiento."], correct: "Coordinar las acciones del cuerpo y transmitir señales entre sus diferentes partes.", justification: "El sistema nervioso, compuesto por el cerebro, la médula espinal y los nervios, es el centro de control y comunicación del cuerpo, procesando información y generando respuestas." },
+            { question: "Un ecosistema está formado por:", options: ["Únicamente los seres vivos de un lugar.", "Solamente los factores abióticos como el clima y el suelo.", "La comunidad de seres vivos y el medio físico con el que interactúan.", "Todas las poblaciones de una misma especie."], correct: "La comunidad de seres vivos y el medio físico con el que interactúan.", justification: "La definición de ecosistema incluye tanto los componentes bióticos (la comunidad de organismos) como los abióticos (el entorno físico-químico), y las interacciones entre ellos." },
+            { question: "El SIDA (Síndrome de Inmunodeficiencia Adquirida) es causado por el virus del VIH, que ataca principalmente a:", options: ["Las células del hígado.", "Las neuronas del cerebro.", "Los glóbulos rojos.", "Las células del sistema inmunitario (linfocitos T CD4)."], correct: "Las células del sistema inmunitario (linfocitos T CD4).", justification: "El VIH debilita el sistema de defensas del cuerpo al destruir los linfocitos T CD4, que son cruciales para coordinar la respuesta inmunitaria, dejando al organismo vulnerable a infecciones oportunistas." },
+            { question: "Científico que propuso la teoría del 'uso y desuso de los órganos' para explicar la evolución, conocida como Lamarckismo.", options: ["Charles Darwin", "Gregor Mendel", "Louis Pasteur", "Jean-Baptiste Lamarck"], correct: "Jean-Baptiste Lamarck", justification: "Lamarck fue uno de los primeros en proponer una teoría de la evolución. Su idea era que los caracteres adquiridos por un individuo durante su vida (como el desarrollo de un músculo por el uso) se heredaban a la descendencia, una idea que fue posteriormente refutada." },
+            { question: "Los hongos (Reino Fungi) obtienen sus nutrientes mediante:", options: ["Fotosíntesis", "Absorción de materia orgánica del entorno", "Ingestión y digestión interna", "Quimiosíntesis"], correct: "Absorción de materia orgánica del entorno", justification: "Los hongos son heterótrofos y actúan como descomponedores o parásitos. Secretan enzimas para digerir la materia orgánica externamente y luego absorben los nutrientes resultantes." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

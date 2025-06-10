@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Español</title>
+    <style>
+        /* --- Variables de Color y Estilo NEPTUR --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* --- Contenedor Principal --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        /* --- Encabezado y Títulos --- */
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* --- Bloque de Pregunta --- */
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+        
+        .reading-passage {
+            background-color: #eef2f5;
+            padding: 15px;
+            border-left: 4px solid var(--color-acento);
+            margin-bottom: 20px;
+            font-style: italic;
+            border-radius: 5px;
+        }
+
+        /* --- Botones --- */
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        /* --- Sección de Resultados --- */
+        .hidden {
+            display: none;
+        }
+        
+        #results {
+            padding-top: 20px;
+        }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        /* --- Diseño Responsivo --- */
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Español</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Español se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Ortografía y Puntuación
+            { question: "Elige la oración con la puntuación correcta.", options: ["María, la hermana de Pedro, viajó a París.", "María la hermana de Pedro, viajó a París.", "María, la hermana de Pedro viajó a París.", "María la hermana de Pedro viajó a París."], correct: "María, la hermana de Pedro, viajó a París.", justification: "La frase 'la hermana de Pedro' es una aposición explicativa que añade información sobre María y debe ir entre comas." },
+            { question: "¿Qué oración utiliza correctamente la tilde diacrítica?", options: ["Aun no ha llegado el paquete.", "Aún no sé si iré a la fiesta.", "Dé un donativo para la causa.", "El es mi mejor amigo."], correct: "Aún no sé si iré a la fiesta.", justification: "'Aún' lleva tilde cuando es sinónimo de 'todavía'. En las otras opciones, 'Aun' (incluso), 'De' (preposición) y 'El' (artículo) no llevan tilde." },
+            { question: "Selecciona la palabra escrita incorrectamente.", options: ["Exuberante", "Convaleciente", "Inhibir", "Exhorbitante"], correct: "Exhorbitante", justification: "La forma correcta es 'exorbitante', sin la 'h' intermedia. Proviene del latín 'ex' (fuera) y 'orbita' (órbita)." },
+            { question: "Elige la opción que completa correctamente la frase: 'No sé ___ lo hizo, ___ no me importa'.", options: ["por que - pero", "porqué - mas", "por qué - mas", "por qué - más"], correct: "por qué - mas", justification: "'Por qué' (separado y con tilde) se usa en preguntas indirectas. 'Mas' (sin tilde) es una conjunción adversativa equivalente a 'pero'." },
+            { question: "La función del punto y coma (;) en la oración 'Estudió toda la noche; sin embargo, no aprobó el examen' es:", options: ["Separar elementos de una enumeración.", "Indicar una pausa breve.", "Separar dos oraciones relacionadas que podrían ser independientes.", "Introducir una cita textual."], correct: "Separar dos oraciones relacionadas que podrían ser independientes.", justification: "El punto y coma se usa para separar oraciones sintácticamente independientes pero semánticamente relacionadas, especialmente cuando la segunda oración es introducida por un conector como 'sin embargo'." },
+            { question: "En la oración 'El niño ___ mucho en el parque', la forma correcta del verbo es:", options: ["jugo", "júgo", "jugó", "júgó"], correct: "jugó", justification: "La palabra 'jugó' es la conjugación en tercera persona del singular del pretérito perfecto simple del verbo jugar. Las palabras agudas terminadas en vocal llevan tilde." },
+            { question: "¿Cuál de estas palabras es un hiato?", options: ["Cielo", "Peón", "Ruido", "Reina"], correct: "Peón", justification: "Un hiato es el encuentro de dos vocales que se pronuncian en sílabas distintas. En 'pe-ón', la vocal fuerte 'e' y la vocal fuerte 'o' forman un hiato." },
+            { question: "Las comillas en la frase: 'Como dijo Sócrates: «Solo sé que no sé nada»' se utilizan para:", options: ["Indicar ironía.", "Señalar una palabra extranjera.", "Resaltar una palabra.", "Introducir una cita textual."], correct: "Introducir una cita textual.", justification: "Uno de los usos principales de las comillas es encerrar las palabras exactas que dijo o escribió otra persona." },
+            
+            // Gramática y Sintaxis
+            { question: "¿Cuál es el sujeto en la oración 'A mis amigos les encantan las películas de terror'?", options: ["A mis amigos", "Les encantan", "las películas de terror", "de terror"], correct: "las películas de terror", justification: "Para encontrar el sujeto, se pregunta '¿Qué les encanta a mis amigos?'. La respuesta es 'las películas de terror'. Si se cambia a singular ('la película'), el verbo también cambia ('encanta'), confirmando la concordancia." },
+            { question: "Identifica la oración en voz pasiva.", options: ["El arquitecto diseñó el edificio.", "El edificio fue diseñado por el arquitecto.", "El edificio se diseñó rápidamente.", "Diseñaron un nuevo edificio."], correct: "El edificio fue diseñado por el arquitecto.", justification: "La voz pasiva se forma con el verbo 'ser' + el participio del verbo principal. El sujeto (el edificio) recibe la acción en lugar de realizarla." },
+            { question: "En la frase 'El libro CUYA portada es roja es mío', la palabra 'cuyo' es un:", options: ["Pronombre interrogativo", "Adjetivo posesivo", "Pronombre relativo posesivo", "Adverbio de modo"], correct: "Pronombre relativo posesivo", justification: "'Cuyo/a' es un pronombre relativo que establece una relación de posesión entre su antecedente (libro) y el sustantivo al que modifica (portada)." },
+            { question: "Elige la oración con la concordancia correcta.", options: ["La gente piensan que es fácil.", "Hubieron muchos problemas.", "Hacen tres años que no la veo.", "El cardumen de peces nada velozmente."], correct: "El cardumen de peces nada velozmente.", justification: "El sujeto 'cardumen' es un sustantivo colectivo singular, por lo que el verbo debe ir en singular ('nada'). Las otras opciones tienen errores de concordancia ('gente piensa', 'hubo problemas', 'hace tres años')." },
+            { question: "Elige el nexo que completa la oración con una relación de consecuencia: 'No estudié para el examen, ___ reprobé'.", options: ["aunque", "pero", "por lo tanto", "porque"], correct: "por lo tanto", justification: "El nexo 'por lo tanto' (o sus equivalentes como 'así que', 'en consecuencia') introduce el efecto o la consecuencia de la primera idea." },
+            { question: "En la oración 'Cantaba mientras se duchaba', ¿qué tipo de verbo es 'cantaba'?", options: ["Pretérito", "Futuro", "Presente", "Copretérito"], correct: "Copretérito", justification: "El copretérito (terminaciones -aba, -ía) se usa para describir acciones habituales o en desarrollo en el pasado, sin un final definido, como en este caso." },
+            { question: "La palabra 'rápidamente' es un:", options: ["Adjetivo", "Adverbio", "Sustantivo", "Verbo"], correct: "Adverbio", justification: "Es un adverbio de modo. Las palabras terminadas en '-mente' son adverbios que modifican al verbo, a un adjetivo o a otro adverbio, indicando cómo se realiza la acción." },
+            { question: "En 'Quiero que VENGAS mañana', el verbo 'vengas' está en modo:", options: ["Indicativo", "Imperativo", "Subjuntivo", "Infinitivo"], correct: "Subjuntivo", justification: "El modo subjuntivo se utiliza para expresar deseos, posibilidades, dudas o acciones hipotéticas. La estructura 'Quiero que...' siempre requiere el subjuntivo." },
+
+            // Comprensión Lectora 1
+            { 
+                type: 'reading',
+                passage: "Lee el siguiente texto y responde las preguntas 17 a 20.\n\nEl efecto invernadero es un fenómeno natural y beneficioso para nosotros. Determinados gases presentes en la atmósfera retienen parte de la radiación térmica emitida por la superficie terrestre tras ser calentada por el sol, manteniendo la temperatura del planeta a un nivel adecuado para el desarrollo de la vida. Sin embargo, la acción del hombre, a través de actividades como la industria, la agricultura intensiva o el transporte, ha aumentado la presencia de estos gases (como el CO2 y el metano), provocando que retengan más calor del necesario. Este calentamiento adicional, conocido como calentamiento global, es la causa principal del cambio climático, que se manifiesta en fenómenos extremos como sequías, inundaciones y la alteración de los ecosistemas.",
+                question: "¿Cuál es la idea principal del texto?",
+                options: ["El efecto invernadero es un fenómeno dañino.", "La industria es la única culpable del cambio climático.", "El efecto invernadero es natural, pero su intensificación por la acción humana causa el cambio climático.", "El CO2 y el metano son los únicos gases de efecto invernadero."],
+                correct: "El efecto invernadero es natural, pero su intensificación por la acción humana causa el cambio climático.",
+                justification: "El texto presenta el fenómeno como algo natural y beneficioso en su estado original, pero explica que es la intensificación humana la que lo convierte en un problema que causa el cambio climático."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto del efecto invernadero.",
+                question: "Según el texto, ¿cuál es la diferencia entre el efecto invernadero y el calentamiento global?",
+                options: ["Son sinónimos y se pueden usar indistintamente.", "El efecto invernadero es la causa y el calentamiento global es el efecto.", "El efecto invernadero es el fenómeno natural, y el calentamiento global es su intensificación anormal.", "El calentamiento global es natural y el efecto invernadero es artificial."],
+                correct: "El efecto invernadero es el fenómeno natural, y el calentamiento global es su intensificación anormal.",
+                justification: "El texto define el efecto invernadero como el proceso natural de retención de calor y el calentamiento global como el 'calentamiento adicional' provocado por el exceso de gases."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto del efecto invernadero.",
+                question: "Se puede inferir del texto que una posible solución al cambio climático sería:",
+                options: ["Eliminar por completo el efecto invernadero.", "Aumentar la actividad industrial para crear nuevas tecnologías.", "Reducir las actividades humanas que emiten gases de efecto invernadero.", "Adaptarse a las sequías e inundaciones sin cambiar nada."],
+                correct: "Reducir las actividades humanas que emiten gases de efecto invernadero.",
+                justification: "Si la causa del problema es el aumento de gases por la acción humana (industria, transporte), la inferencia lógica es que la solución pasa por reducir esas acciones."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto del efecto invernadero.",
+                question: "La función del primer enunciado 'El efecto invernadero es un fenómeno natural y beneficioso para nosotros' es:",
+                options: ["Contradecir la idea principal del texto.", "Presentar una idea común para luego matizarla y corregirla.", "Resumir la conclusión del texto.", "Distraer al lector del verdadero problema."],
+                correct: "Presentar una idea común para luego matizarla y corregirla.",
+                justification: "El autor parte de la base de que el fenómeno es natural para luego explicar cómo se ha convertido en un problema, contrastando la idea inicial con la situación actual."
+            },
+
+            // Más Preguntas Variadas
+            { question: "¿Qué función de la lengua predomina en el enunciado '¡Cierra la puerta, por favor!'?", options: ["Referencial", "Poética", "Fática", "Apelativa"], correct: "Apelativa", justification: "La función apelativa o conativa se centra en el receptor y busca provocar una reacción o influir en su comportamiento, como en una orden o una petición." },
+            { question: "Un texto que busca convencer al lector de adoptar un punto de vista mediante razones y argumentos es un texto:", options: ["Narrativo", "Descriptivo", "Expositivo", "Argumentativo"], correct: "Argumentativo", justification: "La finalidad del texto argumentativo es persuadir o convencer al lector sobre una tesis o idea, presentando pruebas, datos y razonamientos." },
+            { question: "La oración 'El coche de mi vecino, que es rojo, corre mucho' es una oración subordinada:", options: ["Adjetiva explicativa", "Sustantiva", "Adjetiva especificativa", "Adverbial"], correct: "Adjetiva explicativa", justification: "Es adjetiva porque modifica a 'coche'. Es explicativa porque va entre comas y añade una cualidad no esencial. Si fuera 'El coche que es rojo corre mucho' (sin comas), sería especificativa." },
+            { question: "Identifica la metáfora en las siguientes opciones.", options: ["Sus dientes son como perlas.", "Tus ojos son dos luceros.", "Estaba tan cansado que dormí como un tronco.", "La noche era oscura cual boca de lobo."], correct: "Tus ojos son dos luceros.", justification: "Una metáfora es una identificación directa entre dos elementos ('A es B'). Las otras opciones son símiles o comparaciones, ya que utilizan el nexo 'como' o 'cual'." },
+            { question: "Completa con la grafía correcta: 'El ___ de los vienes fue muy rápido.'", options: ["embalaje", "enbalaje", "emvalaje", "envalage"], correct: "embalaje", justification: "Se escribe 'm' antes de 'b' y 'p'. La palabra termina en '-aje'." },
+            { question: "Elige la opción que contiene un pleonasmo.", options: ["Sube para arriba inmediatamente.", "El niño tiene el pelo oscuro.", "La casa es muy grande.", "Compró flores para su madre."], correct: "Sube para arriba inmediatamente.", justification: "Un pleonasmo es una redundancia que añade palabras innecesarias para la comprensión ('subir' ya implica ir 'para arriba')." },
+            { question: "¿Qué es un palíndromo?", options: ["Una palabra que significa lo contrario de otra.", "Una palabra que se lee igual de izquierda a derecha que de derecha a izquierda.", "Una figura retórica que exagera una idea.", "Una palabra que suena igual que otra pero se escribe diferente."], correct: "Una palabra que se lee igual de izquierda a derecha que de derecha a izquierda.", justification: "Ejemplos de palíndromos son 'reconocer', 'somos' o la frase 'Anita lava la tina'." },
+            { question: "La palabra 'libro' es un sustantivo...", options: ["Propio", "Abstracto", "Común", "Colectivo"], correct: "Común", justification: "Es un sustantivo común porque nombra a un ser u objeto de forma genérica, sin diferenciarlo de otros de su misma clase. 'Biblia' sería propio." },
+
+            // Comprensión Lectora 2
+            {
+                type: 'reading',
+                passage: "Lee el siguiente texto y responde las preguntas 29 a 32.\n\nDon Quijote, obra cumbre de Miguel de Cervantes, es mucho más que una simple novela de caballerías. Publicada en dos partes, en 1605 y 1615, narra las aventuras de un hidalgo de la Mancha que, trastornado por la lectura de libros de caballerías, decide convertirse en caballero andante. Sin embargo, la genialidad de la obra reside en el contraste entre el idealismo de don Quijote y el pragmatismo de su escudero, Sancho Panza. A través de este dúo, Cervantes explora la naturaleza de la locura y la cordura, la ilusión y la realidad. La novela es considerada la primera novela moderna por su tratamiento de los personajes, que evolucionan y muestran una complejidad psicológica inédita hasta entonces, y por su innovador uso de la polifonía, es decir, la inclusión de múltiples voces y perspectivas narrativas.",
+                question: "El propósito principal del texto es:",
+                options: ["Narrar una aventura de don Quijote.", "Criticar las novelas de caballerías.", "Resumir y analizar la importancia de la novela Don Quijote.", "Biografiar a Miguel de Cervantes."],
+                correct: "Resumir y analizar la importancia de la novela Don Quijote.",
+                justification: "El texto no narra una aventura, sino que explica de qué trata la obra, por qué es importante (primera novela moderna) y cuáles son sus características principales (contraste de personajes, polifonía)."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto de Don Quijote.",
+                question: "¿Por qué se considera a Don Quijote la primera novela moderna?",
+                options: ["Porque fue publicada en el siglo XVII.", "Por el tratamiento complejo y evolutivo de sus personajes y su estructura narrativa.", "Porque es la novela más famosa del mundo.", "Porque su protagonista está loco."],
+                correct: "Por el tratamiento complejo y evolutivo de sus personajes y su estructura narrativa.",
+                justification: "El texto lo menciona explícitamente: 'es considerada la primera novela moderna por su tratamiento de los personajes, que evolucionan... y por su innovador uso de la polifonía'."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto de Don Quijote.",
+                question: "El término 'pragmatismo' aplicado a Sancho Panza se refiere a que es un personaje:",
+                options: ["Idealista y soñador.", "Loco y aventurero.", "Complejo y polifónico.", "Práctico y apegado a la realidad."],
+                correct: "Práctico y apegado a la realidad.",
+                justification: "En el contexto del texto, 'pragmatismo' se opone al 'idealismo' de don Quijote. Ser pragmático significa centrarse en lo práctico, lo útil y lo real, que es la característica principal de Sancho."
+            },
+            {
+                type: 'reading',
+                passage: "Mismo texto de Don Quijote.",
+                question: "La 'polifonía' en la novela se refiere a:",
+                options: ["El uso de muchos instrumentos musicales.", "La inclusión de múltiples personajes.", "La mezcla de locura y cordura.", "La presencia de múltiples voces y puntos de vista narrativos."],
+                correct: "La presencia de múltiples voces y puntos de vista narrativos.",
+                justification: "El propio texto define el término inmediatamente después de mencionarlo: '...su innovador uso de la polifonía, es decir, la inclusión de múltiples voces y perspectivas narrativas.'"
+            },
+            
+            // Más preguntas variadas para llegar a 40
+            { question: "En 'No quiero este, SINO aquel', la palabra 'sino' es una conjunción:", options: ["Causal", "Condicional", "Adversativa", "Copulativa"], correct: "Adversativa", justification: "'Sino' se usa para contraponer un concepto afirmativo a uno negativo previo. Es una conjunción adversativa, como 'pero' o 'mas'." },
+            { question: "Un verso de 11 sílabas se llama:", options: ["Octosílabo", "Endecasílabo", "Alejandrino", "Heptasílabo"], correct: "Endecasílabo", justification: "Proviene del griego 'hendeka' (once). Es uno de los versos más importantes de la métrica española, utilizado en sonetos y otras formas poéticas cultas." },
+            { question: "La oración 'Se vende casa' tiene un 'se' que indica:", options: ["Voz pasiva refleja", "Impersonalidad", "Énfasis", "Pronombre reflexivo"], correct: "Impersonalidad", justification: "Es una oración impersonal. No hay un sujeto específico que realice la acción de vender; la oración se centra en la acción misma. También se le llama pasiva refleja." },
+            { question: "Elige la palabra que NO pertenece al mismo campo semántico.", options: ["Violín", "Guitarra", "Piano", "Orquesta"], correct: "Orquesta", justification: "Violín, guitarra y piano son 'instrumentos musicales'. 'Orquesta' es un 'conjunto de músicos', por lo que pertenece a un campo semántico relacionado pero diferente." },
+            { question: "El antónimo de la palabra 'locuaz' es:", options: ["Hablador", "Elocuente", "Verboso", "Taciturno"], correct: "Taciturno", justification: "'Locuaz' significa que habla mucho. 'Taciturno' se refiere a alguien callado, silencioso y a menudo melancólico, siendo su opuesto directo." },
+            { question: "Identifica el modo imperativo.", options: ["Ojalá llueva.", "Quizás venga.", "Come más despacio.", "Él come rápido."], correct: "Come más despacio.", justification: "El modo imperativo se utiliza para dar órdenes, mandatos o ruegos directamente a una persona (en este caso, a 'tú')." },
+            { question: "La raíz de la palabra 'submarino' significa:", options: ["Sobre el mar", "Junto al mar", "Dentro del mar", "Debajo del mar"], correct: "Debajo del mar", justification: "El prefijo 'sub-' significa 'debajo de'. Por lo tanto, 'submarino' significa literalmente 'debajo de lo marino'." },
+            { question: "Un texto que relata hechos reales o imaginarios protagonizados por personajes en un tiempo y lugar determinados es:", options: ["Un poema", "Un ensayo", "Un texto narrativo", "Un texto expositivo"], correct: "Un texto narrativo", justification: "La narración es la forma del discurso que se caracteriza por contar una sucesión de acontecimientos, que es la definición proporcionada." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                let lastPassage = "";
+
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    if(q.type === 'reading' && q.passage !== lastPassage) {
+                        const passageDiv = document.createElement('div');
+                        passageDiv.className = 'reading-passage';
+                        passageDiv.innerText = q.passage.split('\n\n')[0];
+                        questionBlock.appendChild(passageDiv);
+                        lastPassage = q.passage;
+                    }
+
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Física</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Física</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Física se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Movimiento y Fuerzas
+            { question: "Un coche viaja a una velocidad constante de 90 km/h. ¿Qué distancia recorre en 2 horas?", options: ["45 km", "92 km", "180 km", "270 km"], correct: "180 km", justification: "En un movimiento rectilíneo uniforme, la distancia es igual a la velocidad por el tiempo (d = v * t). Distancia = 90 km/h * 2 h = 180 km." },
+            { question: "La aceleración se define como:", options: ["El cambio de posición en el tiempo.", "La distancia total recorrida.", "La rapidez con la que se mueve un objeto.", "El cambio de la velocidad en el tiempo."], correct: "El cambio de la velocidad en el tiempo.", justification: "La aceleración es una magnitud vectorial que indica cómo cambia la velocidad de un objeto por unidad de tiempo. Si la velocidad es constante, la aceleración es cero." },
+            { question: "La Primera Ley de Newton, o Ley de la Inercia, establece que un objeto permanecerá en reposo o en movimiento rectilíneo uniforme a menos que:", options: ["Se le aplique una fuerza neta.", "Aumente su masa.", "Cambie de dirección.", "Se encuentre en el vacío."], correct: "Se le aplique una fuerza neta.", justification: "La inercia es la tendencia de los cuerpos a resistir cambios en su estado de movimiento. Solo una fuerza externa neta (no equilibrada) puede cambiar ese estado." },
+            { question: "Si aplicas una fuerza de 20 N a un objeto de 5 kg, ¿cuál es la aceleración que adquiere? (F=ma)", options: ["100 m/s²", "4 m/s²", "0.25 m/s²", "15 m/s²"], correct: "4 m/s²", justification: "Según la Segunda Ley de Newton (F=ma), la aceleración es a = F/m. a = 20 N / 5 kg = 4 m/s²." },
+            { question: "La Tercera Ley de Newton, o Principio de Acción y Reacción, afirma que:", options: ["La fuerza es igual a la masa por la aceleración.", "A toda acción corresponde una reacción de igual magnitud pero en la misma dirección.", "Por cada fuerza de acción, existe una fuerza de reacción de igual magnitud y en sentido opuesto.", "Un objeto en reposo tiende a permanecer en reposo."], correct: "Por cada fuerza de acción, existe una fuerza de reacción de igual magnitud y en sentido opuesto.", justification: "Esta ley explica que las fuerzas siempre ocurren en pares. Si un objeto A ejerce una fuerza sobre un objeto B, el objeto B ejerce una fuerza igual y opuesta sobre A." },
+            { question: "El peso de un objeto es:", options: ["La cantidad de materia que posee.", "La fuerza de atracción gravitacional que la Tierra ejerce sobre él.", "La resistencia que opone a ser movido.", "La densidad del material del que está hecho."], correct: "La fuerza de atracción gravitacional que la Tierra ejerce sobre él.", justification: "El peso es una fuerza (P = m*g), donde 'm' es la masa y 'g' es la aceleración de la gravedad. La masa es la cantidad de materia y es constante, mientras que el peso depende de la gravedad." },
+            { question: "Un objeto se deja caer desde lo alto de un edificio (caída libre). ¿Qué tipo de movimiento describe?", options: ["Movimiento rectilíneo uniforme.", "Movimiento circular.", "Movimiento rectilíneo uniformemente acelerado.", "Movimiento armónico simple."], correct: "Movimiento rectilíneo uniformemente acelerado.", justification: "En la caída libre (despreciando la resistencia del aire), el único agente que actúa es la gravedad, que produce una aceleración constante (aproximadamente 9.8 m/s²). Por lo tanto, es un MRUA." },
+            
+            // Energía, Trabajo y Potencia
+            { question: "La energía cinética es la energía que posee un cuerpo debido a su:", options: ["Altura", "Temperatura", "Movimiento", "Composición química"], correct: "Movimiento", justification: "La energía cinética (Ec = 1/2 * m * v²) depende de la masa (m) y de la velocidad (v) de un objeto. A mayor velocidad, mayor energía cinética." },
+            { question: "La energía potencial gravitatoria es la energía que un objeto posee debido a su:", options: ["Velocidad", "Masa", "Posición en un campo gravitatorio (altura).", "Temperatura"], correct: "Posición en un campo gravitatorio (altura).", justification: "La energía potencial gravitatoria (Ep = m*g*h) depende de la masa (m), la gravedad (g) y la altura (h) a la que se encuentra. A mayor altura, mayor energía potencial." },
+            { question: "El Principio de Conservación de la Energía establece que:", options: ["La energía no se crea ni se destruye, solo se transforma.", "La energía siempre disminuye en cualquier proceso.", "La energía cinética siempre es igual a la potencial.", "La energía solo puede crearse a partir de la masa."], correct: "La energía no se crea ni se destruye, solo se transforma.", justification: "Es una de las leyes fundamentales de la física. La energía total de un sistema aislado permanece constante, aunque puede cambiar de una forma a otra (de potencial a cinética, por ejemplo)." },
+            { question: "En física, el trabajo se realiza cuando:", options: ["Un objeto se mantiene en reposo.", "Una fuerza aplicada a un objeto no produce desplazamiento.", "Una fuerza aplicada a un objeto provoca un desplazamiento en la dirección de la fuerza.", "Un objeto se mueve a velocidad constante sin que actúe ninguna fuerza."], correct: "Una fuerza aplicada a un objeto provoca un desplazamiento en la dirección de la fuerza.", justification: "El trabajo (W = F * d) es una transferencia de energía. Requiere que una fuerza cause un desplazamiento. Sostener un objeto pesado sin moverlo no realiza trabajo en el sentido físico." },
+            { question: "La unidad de medida del trabajo y la energía en el Sistema Internacional es el:", options: ["Newton", "Watt", "Pascal", "Joule"], correct: "Joule", justification: "El Joule (J) es la unidad de energía, trabajo y calor. Un Joule es el trabajo realizado por una fuerza de un Newton al desplazar un objeto un metro." },
+            { question: "La potencia se define como:", options: ["La cantidad total de energía de un sistema.", "La rapidez con la que se realiza un trabajo o se transfiere energía.", "La fuerza necesaria para mover un objeto.", "La capacidad de un cuerpo para realizar trabajo."], correct: "La rapidez con la que se realiza un trabajo o se transfiere energía.", justification: "La potencia (P = W/t) mide cuán rápido se hace un trabajo. Su unidad es el Watt (W), que equivale a un Joule por segundo." },
+
+            // Termodinámica y Ondas
+            { question: "La transferencia de calor por contacto directo entre dos cuerpos o partículas se llama:", options: ["Convección", "Radiación", "Conducción", "Evaporación"], correct: "Conducción", justification: "La conducción es típica de los sólidos. El calor se transfiere por la vibración de las partículas que chocan entre sí, sin que haya un transporte de materia." },
+            { question: "El calor se transfiere en los líquidos y gases principalmente por ________, que implica el movimiento de masas de fluido.", options: ["Conducción", "Radiación", "Evaporación", "Convección"], correct: "Convección", justification: "En la convección, las partes más calientes y menos densas del fluido ascienden, mientras que las más frías y densas descienden, creando corrientes que distribuyen el calor." },
+            { question: "El calor del Sol llega a la Tierra a través del vacío del espacio por medio de:", options: ["Conducción", "Convección", "Radiación", "Contacto directo"], correct: "Radiación", justification: "La radiación es la transferencia de calor mediante ondas electromagnéticas (como la luz infrarroja), que no necesitan un medio material para propagarse." },
+            { question: "La temperatura es una medida de:", options: ["La cantidad de calor de un cuerpo.", "La energía cinética promedio de las partículas de un cuerpo.", "La energía total de un cuerpo.", "La capacidad de un cuerpo para transferir calor."], correct: "La energía cinética promedio de las partículas de un cuerpo.", justification: "A nivel microscópico, la temperatura está relacionada con la agitación o movimiento de las partículas. A mayor agitación, mayor temperatura. El calor, en cambio, es la energía que se transfiere." },
+            { question: "Una onda transversal se caracteriza porque sus partículas vibran:", options: ["En la misma dirección en que se propaga la onda.", "De forma circular.", "En dirección perpendicular a la propagación de la onda.", "Sin moverse de su posición de equilibrio."], correct: "En dirección perpendicular a la propagación de la onda.", justification: "Un ejemplo claro es una ola en una cuerda: la onda avanza horizontalmente, pero cada punto de la cuerda se mueve verticalmente (arriba y abajo)." },
+            { question: "El sonido es una onda ___________ que necesita un medio material para propagarse.", options: ["Electromagnética", "Transversal", "Longitudinal", "Luminosa"], correct: "Longitudinal", justification: "El sonido es una onda mecánica (necesita un medio) y longitudinal, porque las partículas del medio (aire, agua) vibran en la misma dirección en la que viaja la onda, creando zonas de compresión y rarefacción." },
+            { question: "La propiedad de las ondas que se manifiesta cuando rodean un obstáculo o pasan por una abertura pequeña se llama:", options: ["Reflexión", "Refracción", "Interferencia", "Difracción"], correct: "Difracción", justification: "La difracción es la curvatura o dispersión de las ondas cuando encuentran un obstáculo. Es la razón por la que podemos escuchar un sonido aunque no veamos la fuente directamente." },
+
+            // Electricidad y Magnetismo
+            { question: "La ley de Ohm establece una relación entre:", options: ["Fuerza, masa y aceleración.", "Voltaje, corriente y resistencia.", "Energía, masa y velocidad de la luz.", "Presión, volumen y temperatura."], correct: "Voltaje, corriente y resistencia.", justification: "La Ley de Ohm (V = I * R) es fundamental en los circuitos eléctricos. Establece que el voltaje (V) es directamente proporcional a la corriente (I) y a la resistencia (R)." },
+            { question: "Materiales que ofrecen muy poca resistencia al paso de la corriente eléctrica.", options: ["Aislantes", "Semiconductores", "Conductores", "Superconductores"], correct: "Conductores", justification: "Los conductores, como los metales (cobre, plata), tienen electrones libres que pueden moverse con facilidad, permitiendo el flujo de la corriente eléctrica. Los aislantes tienen una resistencia muy alta." },
+            { question: "Un circuito en serie se caracteriza porque:", options: ["La corriente se divide en cada componente.", "El voltaje es el mismo en todos los componentes.", "Los componentes están conectados uno tras otro, en un solo camino.", "Si un componente falla, los demás siguen funcionando."], correct: "Los componentes están conectados uno tras otro, en un solo camino.", justification: "En un circuito en serie, la corriente eléctrica solo tiene una trayectoria para fluir. Por lo tanto, si se interrumpe el circuito en cualquier punto (un foco se funde), la corriente deja de fluir por completo." },
+            { question: "El campo magnético de la Tierra nos protege de:", options: ["Los meteoritos", "El frío del espacio", "La radiación solar y el viento solar", "Los cambios de gravedad"], correct: "La radiación solar y el viento solar", justification: "La magnetosfera terrestre actúa como un escudo que desvía la mayor parte de las partículas cargadas provenientes del Sol (viento solar), protegiendo la vida en la Tierra." },
+            { question: "La inducción electromagnética, descubierta por Faraday, establece que se puede generar una corriente eléctrica en un circuito:", options: ["Aumentando su resistencia.", "Cambiando el voltaje de la fuente.", "Variando el campo magnético que lo atraviesa.", "Calentando el conductor."], correct: "Variando el campo magnético que lo atraviesa.", justification: "Este es el principio de funcionamiento de los generadores eléctricos y transformadores. Un campo magnético variable en el tiempo induce una fuerza electromotriz (voltaje) y, por lo tanto, una corriente." },
+            
+            // Óptica y Física Moderna
+            { question: "La refracción de la luz es el fenómeno por el cual la luz:", options: ["Rebota al chocar con una superficie.", "Se curva al pasar por una rendija.", "Cambia de dirección al pasar de un medio a otro con diferente densidad.", "Se separa en sus colores componentes."], correct: "Cambia de dirección al pasar de un medio a otro con diferente densidad.", justification: "La refracción ocurre porque la velocidad de la luz es diferente en distintos medios (aire, agua, vidrio). Este fenómeno explica por qué un lápiz parece 'quebrado' al meterlo en un vaso con agua." },
+            { question: "El espectro electromagnético ordena las ondas según su longitud de onda y frecuencia. ¿Cuál de las siguientes radiaciones tiene la mayor energía?", options: ["Ondas de radio", "Luz visible", "Rayos X", "Microondas"], correct: "Rayos X", justification: "La energía de una onda electromagnética es directamente proporcional a su frecuencia (e inversamente proporcional a su longitud de onda). Los rayos X tienen una frecuencia mucho más alta que la luz visible o las ondas de radio, y por lo tanto, más energía." },
+            { question: "La luz blanca se descompone en los colores del arcoíris cuando pasa a través de un prisma. Este fenómeno se llama:", options: ["Dispersión", "Difracción", "Polarización", "Reflexión total"], correct: "Dispersión", justification: "La dispersión ocurre porque el índice de refracción de un material (como el vidrio del prisma) es ligeramente diferente para cada color (longitud de onda). Esto hace que cada color se desvíe un ángulo distinto, separándose." },
+            { question: "Una lente convergente, como una lupa, se utiliza para:", options: ["Hacer que los rayos de luz paralelos se separen.", "Formar imágenes siempre virtuales y más pequeñas.", "Hacer que los rayos de luz paralelos se junten en un punto (foco).", "Corregir la miopía."], correct: "Hacer que los rayos de luz paralelos se junten en un punto (foco).", justification: "Las lentes convergentes son más gruesas en el centro y hacen converger la luz. Se usan para corregir la hipermetropía y como lupas para formar imágenes aumentadas." },
+            
+            // Más Preguntas Variadas
+            { question: "La presión se define como la fuerza aplicada por unidad de:", options: ["Tiempo", "Masa", "Volumen", "Área"], correct: "Área", justification: "La presión (P = F/A) mide cómo se distribuye una fuerza sobre una superficie. Una misma fuerza puede producir una gran presión si se aplica en un área pequeña (un clavo) o una pequeña presión si se aplica en un área grande (raquetas de nieve)." },
+            { question: "Según el principio de Arquímedes, todo cuerpo sumergido en un fluido experimenta un empuje hacia arriba igual a:", options: ["Su propio peso.", "El peso del fluido desalojado.", "La densidad del fluido.", "La presión en el fondo del recipiente."], correct: "El peso del fluido desalojado.", justification: "Este principio explica por qué los objetos flotan. Si el empuje (igual al peso del volumen de fluido que el objeto desplaza) es mayor o igual al peso del objeto, este flota." },
+            { question: "La unidad de la frecuencia en el Sistema Internacional es el Hertz (Hz), que equivale a:", options: ["Ciclos por metro", "Metros por segundo", "Ciclos por segundo", "Segundos por ciclo"], correct: "Ciclos por segundo", justification: "La frecuencia mide cuántas veces se repite un ciclo (una vibración u onda completa) en un segundo. 1 Hz = 1 ciclo/s." },
+            { question: "La energía nuclear se libera a partir de reacciones que ocurren en:", options: ["Los enlaces químicos de las moléculas.", "Las capas de electrones de los átomos.", "El núcleo de los átomos.", "Las mitocondrias celulares."], correct: "El núcleo de los átomos.", justification: "La energía nuclear proviene de la fisión (división de núcleos pesados) o la fusión (unión de núcleos ligeros), procesos que liberan enormes cantidades de energía al convertir una pequeña parte de la masa en energía, según E=mc²." },
+            { question: "Dos cargas eléctricas del mismo signo:", options: ["Se atraen.", "Se repelen.", "No interactúan.", "Se neutralizan."], correct: "Se repelen.", justification: "Es una ley fundamental de la electrostática: cargas de igual signo (positivo-positivo o negativo-negativo) se repelen, mientras que cargas de signo opuesto (positivo-negativo) se atraen." },
+            { question: "La rapidez es una magnitud __________, mientras que la velocidad es una magnitud _________.", options: ["vectorial - escalar", "escalar - vectorial", "fundamental - derivada", "derivada - fundamental"], correct: "escalar - vectorial", justification: "La rapidez solo indica la magnitud (ej. 80 km/h), por lo que es escalar. La velocidad, además de la magnitud, incluye la dirección y el sentido (ej. 80 km/h hacia el norte), por lo que es vectorial." },
+            { question: "La energía eólica aprovecha la energía cinética de:", options: ["Las olas del mar", "El viento", "La luz solar", "El agua de los ríos"], correct: "El viento", justification: "La energía eólica utiliza aerogeneradores (turbinas de viento) para convertir la energía del movimiento del aire (energía cinética) en energía eléctrica." },
+            { question: "Si la masa de un objeto se duplica, pero su velocidad permanece constante, su energía cinética:", options: ["Se reduce a la mitad.", "Se duplica.", "Se cuadruplica.", "Permanece igual."], correct: "Se duplica.", justification: "La fórmula es Ec = (1/2)mv². Si la masa 'm' se convierte en '2m', la energía cinética también se multiplica por 2, ya que es directamente proporcional a la masa." },
+            { question: "Instrumento que se utiliza para medir la corriente eléctrica en un circuito.", options: ["Voltímetro", "Óhmetro", "Amperímetro", "Potenciómetro"], correct: "Amperímetro", justification: "El amperímetro mide la intensidad de la corriente en Amperios (A) y debe conectarse en serie en el circuito. El voltímetro mide el voltaje y se conecta en paralelo." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Historia</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Historia</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Historia se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Historia Universal
+            { question: "La invención de la escritura cuneiforme es una aportación de la civilización:", options: ["Egipcia", "China", "Mesopotámica", "Griega"], correct: "Mesopotámica", justification: "Los sumerios, en Mesopotamia, desarrollaron la escritura cuneiforme, uno de los primeros sistemas de escritura de la humanidad, grabado en tablillas de arcilla." },
+            { question: "Filósofo griego, maestro de Platón, conocido por su método de la mayéutica y por la frase 'Solo sé que no sé nada'.", options: ["Aristóteles", "Sócrates", "Heráclito", "Tales de Mileto"], correct: "Sócrates", justification: "Sócrates es famoso por su método de diálogo y preguntas (mayéutica) para llegar a la verdad. No dejó obra escrita, pero su pensamiento fue plasmado por su discípulo Platón." },
+            { question: "Principal causa de la caída del Imperio Romano de Occidente en el año 476 d.C.", options: ["La expansión del cristianismo", "Las invasiones de los pueblos bárbaros", "Una crisis económica por la falta de comercio", "La erupción del Vesubio"], correct: "Las invasiones de los pueblos bárbaros", justification: "Aunque hubo múltiples factores, las constantes invasiones y la presión de los pueblos germánicos (bárbaros) en las fronteras fueron el factor decisivo que culminó con la deposición del último emperador." },
+            { question: "El Renacimiento fue un movimiento cultural que tuvo su origen en:", options: ["Francia", "España", "Inglaterra", "Italia"], correct: "Italia", justification: "El Renacimiento surgió en las prósperas ciudades-estado italianas, como Florencia, durante el siglo XIV, caracterizado por un renovado interés en la cultura clásica grecolatina." },
+            { question: "Acontecimiento que dio inicio a la Edad Moderna, facilitando la difusión masiva de ideas y el conocimiento.", options: ["El descubrimiento de América", "La invención de la imprenta", "La caída de Constantinopla", "La Reforma Protestante"], correct: "La invención de la imprenta", justification: "La imprenta de tipos móviles de Gutenberg (c. 1450) revolucionó la comunicación, permitiendo la producción masiva de libros y la rápida diseminación de ideas, lo que fue clave para movimientos como la Reforma y el Renacimiento." },
+            { question: "Movimiento intelectual del siglo XVIII que se basaba en la razón, la ciencia y el respeto a los derechos del hombre.", options: ["Humanismo", "Barroco", "Ilustración", "Romanticismo"], correct: "Ilustración", justification: "La Ilustración, también conocida como el 'Siglo de las Luces', promovió el uso de la razón como la principal fuente de autoridad y legitimidad, influyendo en la Revolución Francesa y la independencia de las Trece Colonias." },
+            { question: "La Revolución Industrial comenzó en el siglo XVIII en:", options: ["Estados Unidos", "Francia", "Gran Bretaña", "Alemania"], correct: "Gran Bretaña", justification: "Gran Bretaña fue la cuna de la Revolución Industrial debido a factores como la disponibilidad de carbón y hierro, un imperio colonial que proveía materias primas y mercados, y avances tecnológicos como la máquina de vapor." },
+            { question: "Causa detonante de la Primera Guerra Mundial en 1914.", options: ["El hundimiento del Lusitania", "La invasión de Polonia", "El asesinato del archiduque Francisco Fernando de Austria", "La crisis económica de 1929"], correct: "El asesinato del archiduque Francisco Fernando de Austria", justification: "El asesinato del heredero al trono austrohúngaro en Sarajevo por un nacionalista serbio fue el pretexto que activó el complejo sistema de alianzas militares en Europa, dando inicio a la guerra." },
+            { question: "Tratado que puso fin oficialmente a la Primera Guerra Mundial e impuso duras condiciones a Alemania.", options: ["Tratado de Brest-Litovsk", "Pacto de Acero", "Tratado de Versalles", "Conferencia de Yalta"], correct: "Tratado de Versalles", justification: "Firmado en 1919, el Tratado de Versalles culpó a Alemania de la guerra, le impuso enormes reparaciones económicas y la despojó de territorio y colonias, creando un resentimiento que contribuyó a la Segunda Guerra Mundial." },
+            { question: "La Guerra Fría fue un enfrentamiento ideológico, político y militar entre dos superpotencias:", options: ["Reino Unido y Francia", "China y Japón", "Estados Unidos y la Unión Soviética", "Alemania e Italia"], correct: "Estados Unidos y la Unión Soviética", justification: "Tras la Segunda Guerra Mundial, el mundo se dividió en dos bloques: el capitalista, liderado por EE. UU., y el comunista, liderado por la URSS. Su rivalidad, sin un enfrentamiento directo a gran escala, se conoció como la Guerra Fría." },
+            { question: "Símbolo de la división de Alemania y del mundo durante la Guerra Fría, cuya caída en 1989 marcó el principio del fin del bloque comunista.", options: ["La Cortina de Hierro", "El Muro de Berlín", "La Línea Maginot", "El Muro de Adriano"], correct: "El Muro de Berlín", justification: "Construido en 1961 para evitar la fuga de ciudadanos de Alemania Oriental a la Occidental, el Muro de Berlín fue el símbolo más tangible de la Guerra Fría. Su caída precipitó la reunificación alemana y el colapso de la URSS." },
+            { question: "Proceso de finales del siglo XX caracterizado por la creciente interconexión económica, política, social y cultural a escala mundial.", options: ["Imperialismo", "Neoliberalismo", "Globalización", "Guerra Fría"], correct: "Globalización", justification: "Impulsada por los avances en las tecnologías de la comunicación y el transporte, la globalización se refiere a la intensificación de las relaciones sociales a nivel mundial, que conectan localidades distantes de tal manera que los acontecimientos locales son modelados por eventos que ocurren a muchos kilómetros de distancia y viceversa." },
+            
+            // Historia de México
+            { question: "Civilización prehispánica que se desarrolló en el periodo Preclásico en la costa del Golfo de México y es conocida por sus cabezas colosales.", options: ["Maya", "Teotihuacana", "Olmeca", "Zapoteca"], correct: "Olmeca", justification: "La cultura Olmeca es considerada la 'cultura madre' de Mesoamérica. Floreció en el Preclásico y es famosa por su impresionante arte monumental, especialmente las cabezas colosales de basalto." },
+            { question: "La ciudad de Tenochtitlan, capital del Imperio Azteca, fue fundada en el año 1325 en:", options: ["Un valle fértil en Oaxaca", "La península de Yucatán", "Un islote en el lago de Texcoco", "Las laderas del Popocatépetl"], correct: "Un islote en el lago de Texcoco", justification: "Según la leyenda, los mexicas fundaron su ciudad donde encontraron un águila devorando a una serpiente sobre un nopal, señal que se dio en un islote en medio del lago de Texcoco." },
+            { question: "Año en que cayó la ciudad de México-Tenochtitlan ante los conquistadores españoles liderados por Hernán Cortés.", options: ["1492", "1519", "1521", "1535"], correct: "1521", justification: "Después de un largo asedio y con el apoyo de pueblos indígenas aliados como los tlaxcaltecas, los españoles lograron la conquista de la capital azteca el 13 de agosto de 1521." },
+            { question: "Durante la época colonial, la principal actividad económica que generó grandes riquezas para la Corona Española fue:", options: ["La agricultura", "La ganadería", "La minería", "El comercio textil"], correct: "La minería", justification: "La extracción de plata, principalmente de minas como las de Zacatecas y Guanajuato, fue la actividad económica más importante de la Nueva España y una fuente masiva de riqueza para España." },
+            { question: "Las Reformas Borbónicas en el siglo XVIII buscaron:", options: ["Dar más autonomía a los criollos en el gobierno.", "Aumentar el poder de la Iglesia en la Nueva España.", "Centralizar el poder de la Corona y aumentar la recaudación de impuestos.", "Fomentar el libre comercio entre las colonias americanas."], correct: "Centralizar el poder de la Corona y aumentar la recaudación de impuestos.", justification: "Implementadas por la dinastía de los Borbones, estas reformas tenían como objetivo modernizar la administración del imperio y extraer más recursos de sus colonias, lo que implicó restar poder a las élites locales (criollos) y a la Iglesia." },
+            { question: "El Grito de Dolores, que marca el inicio de la Guerra de Independencia de México, fue proclamado por:", options: ["José María Morelos", "Vicente Guerrero", "Agustín de Iturbide", "Miguel Hidalgo y Costilla"], correct: "Miguel Hidalgo y Costilla", justification: "En la madrugada del 16 de septiembre de 1810, el cura Miguel Hidalgo convocó al pueblo de Dolores a levantarse en armas contra el mal gobierno, dando inicio a la lucha por la independencia." },
+            { question: "Documento proclamado por José María Morelos y Pavón en 1813 que establece por primera vez la independencia de México y la república como forma de gobierno.", options: ["Plan de Iguala", "Constitución de Apatzingán", "Sentimientos de la Nación", "Plan de Ayala"], correct: "Sentimientos de la Nación", justification: "En este documento, Morelos delineó los principios de una nueva nación soberana, con división de poderes, abolición de la esclavitud y de las castas, y la independencia formal de España." },
+            { question: "La Guerra de los Pasteles fue un conflicto armado entre México y:", options: ["Estados Unidos", "España", "Inglaterra", "Francia"], correct: "Francia", justification: "Ocurrida en 1838, esta intervención francesa se originó por reclamaciones económicas de ciudadanos franceses en México, incluyendo las de un pastelero, de donde toma su nombre popular." },
+            { question: "La guerra entre México y Estados Unidos (1846-1848) culminó con la firma del tratado de:", options: ["Guadalupe Hidalgo", "Versalles", "Ciudad Juárez", "La Mesilla"], correct: "Guadalupe Hidalgo", justification: "Mediante el Tratado de Guadalupe Hidalgo, México se vio forzado a ceder más de la mitad de su territorio a Estados Unidos, incluyendo los actuales estados de California, Nevada, Utah, Arizona, Nuevo México, y partes de otros." },
+            { question: "Las Leyes de Reforma, impulsadas por los liberales a mediados del siglo XIX, buscaban principalmente:", options: ["Establecer una monarquía constitucional.", "Fortalecer el poder del ejército.", "Separar a la Iglesia del Estado y limitar su poder económico.", "Crear un banco central para México."], correct: "Separar a la Iglesia del Estado y limitar su poder económico.", justification: "Leyes como la Ley Juárez y la Ley Lerdo buscaban eliminar los privilegios (fueros) de la Iglesia y el ejército y desamortizar los bienes eclesiásticos para crear una sociedad laica y capitalista." },
+            { question: "Periodo de la historia de México (1876-1911) caracterizado por la dictadura de Porfirio Díaz, el crecimiento económico y una gran desigualdad social.", options: ["El Porfiriato", "La República Restaurada", "El Maximato", "El Milagro Mexicano"], correct: "El Porfiriato", justification: "El gobierno de Porfirio Díaz se centró en el orden, la paz y el progreso material ('orden y progreso'), atrayendo inversión extranjera y modernizando el país, pero a costa de la represión política y la explotación de campesinos y obreros." },
+            { question: "El Plan de San Luis, proclamado por Francisco I. Madero en 1910, llamaba a:", options: ["Crear una nueva constitución.", "Desconocer a Porfirio Díaz y levantarse en armas el 20 de noviembre.", "Repartir las tierras a los campesinos.", "Nacionalizar el petróleo."], correct: "Desconocer a Porfirio Díaz y levantarse en armas el 20 de noviembre.", justification: "Tras ser encarcelado y acusarse de fraude electoral, Madero escapó y proclamó el Plan de San Luis, que se convirtió en el llamado formal al levantamiento que dio inicio a la Revolución Mexicana." },
+            { question: "La Constitución Política de los Estados Unidos Mexicanos, que nos rige actualmente, fue promulgada en:", options: ["1824", "1857", "1910", "1917"], correct: "1917", justification: "Promulgada en Querétaro el 5 de febrero de 1917, esta constitución fue el resultado de la Revolución Mexicana. Fue pionera a nivel mundial por incluir garantías sociales, como los derechos de los trabajadores (Artículo 123) y la propiedad de la nación sobre la tierra y los recursos (Artículo 27)." },
+            { question: "Presidente de México que llevó a cabo la Expropiación Petrolera el 18 de marzo de 1938.", options: ["Venustiano Carranza", "Álvaro Obregón", "Lázaro Cárdenas", "Plutarco Elías Calles"], correct: "Lázaro Cárdenas", justification: "Basándose en el artículo 27 de la Constitución, el presidente Lázaro Cárdenas del Río decretó la expropiación de la industria petrolera, que estaba en manos de compañías extranjeras, y creó Petróleos Mexicanos (PEMEX)." },
+            { question: "El movimiento estudiantil de 1968 en México culminó trágicamente con:", options: ["La firma de un acuerdo con el gobierno.", "La renuncia del presidente Gustavo Díaz Ordaz.", "La matanza en la Plaza de las Tres Culturas de Tlatelolco.", "La celebración de los Juegos Olímpicos."], correct: "La matanza en la Plaza de las Tres Culturas de Tlatelolco.", justification: "El 2 de octubre de 1968, días antes del inicio de los Juegos Olímpicos, una manifestación estudiantil pacífica fue reprimida violentamente por el ejército y grupos paramilitares, resultando en un número indeterminado de muertos y heridos." },
+            { question: "Tratado de libre comercio que México firmó con Estados Unidos y Canadá y que entró en vigor en 1994.", options: ["MERCOSUR", "Pacto Andino", "TLCAN", "Unión Europea"], correct: "TLCAN", justification: "El Tratado de Libre Comercio de América del Norte (TLCAN) fue un acuerdo que buscaba eliminar las barreras comerciales entre los tres países, marcando la entrada de México en un modelo económico neoliberal." },
+            { question: "La Guerra Cristera (1926-1929) fue un conflicto armado entre el gobierno de Plutarco Elías Calles y:", options: ["Campesinos zapatistas.", "Militares porfiristas.", "Grupos católicos que se oponían a las políticas anticlericales.", "Partidarios de Álvaro Obregón."], correct: "Grupos católicos que se oponían a las políticas anticlericales.", justification: "La llamada Ley Calles buscaba limitar drásticamente el poder de la Iglesia Católica, lo que provocó un levantamiento armado de fieles católicos al grito de '¡Viva Cristo Rey!'." },
+            { question: "Durante la Segunda Guerra Mundial, México participó activamente al lado de los Aliados enviando a combatir al:", options: ["Batallón de San Patricio", "Ejército Trigarante", "Escuadrón 201", "División del Norte"], correct: "Escuadrón 201", justification: "Conocido como las 'Águilas Aztecas', el Escuadrón 201 fue una unidad de la Fuerza Aérea Expedicionaria Mexicana que combatió en el frente del Pacífico, principalmente en Filipinas." },
+            { question: "Principal cultivo de la agricultura mesoamericana y base de la alimentación de sus pueblos.", options: ["Trigo", "Arroz", "Papa", "Maíz"], correct: "Maíz", justification: "El maíz fue domesticado en Mesoamérica y se convirtió en el pilar de su dieta y su cultura. Su cultivo permitió el desarrollo de grandes civilizaciones." },
+            { question: "El periodo conocido como 'Milagro Mexicano' (c. 1940-1970) se caracterizó por:", options: ["Una gran devaluación del peso.", "Un alto y sostenido crecimiento económico e industrialización.", "Una profunda crisis agrícola.", "Un aumento de la deuda externa."], correct: "Un alto y sostenido crecimiento económico e industrialización.", justification: "Durante estas décadas, México experimentó un crecimiento económico promedio del 6% anual, basado en el modelo de sustitución de importaciones, lo que llevó a una rápida industrialización y urbanización." },
+            { question: "La Noche Triste es el nombre que se le da al episodio en el que:", options: ["Hernán Cortés y sus hombres huyeron de Tenochtitlan con grandes pérdidas.", "Se descubrió la conspiración de Querétaro.", "Moctezuma fue asesinado.", "Cayó la ciudad de Tenochtitlan."], correct: "Hernán Cortés y sus hombres huyeron de Tenochtitlan con grandes pérdidas.", justification: "Tras el levantamiento mexica por la matanza del Templo Mayor, los españoles intentaron escapar de la ciudad en la noche del 30 de junio de 1520, pero fueron descubiertos y sufrieron una devastadora derrota." },
+            { question: "El 'Maximato' fue el periodo (1928-1934) en el que el poder político de México fue ejercido de facto por:", options: ["Lázaro Cárdenas", "Emiliano Zapata", "Plutarco Elías Calles", "Venustiano Carranza"], correct: "Plutarco Elías Calles", justification: "Aunque había presidentes nominales (Emilio Portes Gil, Pascual Ortiz Rubio y Abelardo L. Rodríguez), el verdadero poder lo ostentaba Plutarco Elías Calles, conocido como el 'Jefe Máximo de la Revolución'." },
+            { question: "La principal demanda del Plan de Ayala, proclamado por Emiliano Zapata, era:", options: ["La no reelección del presidente.", "La restitución de las tierras a los campesinos.", "La nacionalización de la industria.", "La libertad de prensa."], correct: "La restitución de las tierras a los campesinos.", justification: "Bajo el lema 'Tierra y Libertad', el zapatismo se centró en la lucha por la reforma agraria y la devolución de las tierras que habían sido arrebatadas a las comunidades campesinas." },
+            { question: "Forma de gobierno de la civilización Maya durante el periodo Clásico.", options: ["Un imperio centralizado", "Una confederación de tribus nómadas", "Un conjunto de ciudades-estado independientes", "Una democracia directa"], correct: "Un conjunto de ciudades-estado independientes", justification: "Los mayas no formaron un imperio unificado, sino que se organizaron en ciudades-estado, como Tikal, Palenque o Calakmul, que eran políticamente autónomas y a menudo competían entre sí." },
+            { question: "Figura clave de la Independencia que consumó la alianza entre insurgentes y realistas con el Plan de Iguala y el Ejército Trigarante.", options: ["Vicente Guerrero", "Guadalupe Victoria", "Agustín de Iturbide", "Francisco Xavier Mina"], correct: "Agustín de Iturbide", justification: "Iturbide, un militar realista, pactó con Vicente Guerrero, líder insurgente, para unir fuerzas bajo el Plan de Iguala. Juntos formaron el Ejército Trigarante, que entró triunfante a la Ciudad de México, consumando la independencia." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

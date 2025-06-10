@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Química</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Química</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Química se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Propiedades de la Materia
+            { question: "La propiedad de la materia que indica la cantidad de masa contenida en un volumen determinado es la:", options: ["Masa", "Densidad", "Peso", "Volumen"], correct: "Densidad", justification: "La densidad es una propiedad intensiva que se define como la relación entre la masa de un cuerpo y el volumen que ocupa (d = m/V)." },
+            { question: "La capacidad de un material para ser estirado en hilos delgados se llama:", options: ["Maleabilidad", "Dureza", "Ductilidad", "Elasticidad"], correct: "Ductilidad", justification: "La ductilidad es la propiedad de los materiales, especialmente los metales, de deformarse plásticamente sin romperse para formar alambres o hilos. La maleabilidad es la capacidad de formar láminas." },
+            { question: "Un cambio químico se diferencia de un cambio físico porque en el primero:", options: ["Cambia el estado de agregación.", "Se altera la composición y se forman nuevas sustancias.", "La sustancia se puede recuperar por métodos físicos.", "Solo cambia la forma o el tamaño."], correct: "Se altera la la composición y se forman nuevas sustancias.", justification: "En un cambio químico (reacción química) los átomos se reorganizan para formar sustancias diferentes con propiedades distintas, mientras que en un cambio físico la identidad química de la sustancia no cambia." },
+            { question: "El punto de ebullición de una sustancia es una propiedad:", options: ["Extensiva, porque depende de la cantidad de materia.", "General, porque la tienen todas las sustancias.", "Intensiva, porque no depende de la cantidad de materia.", "Química, porque altera la composición."], correct: "Intensiva, porque no depende de la cantidad de materia.", justification: "Las propiedades intensivas (o específicas) no varían con la cantidad de sustancia. El agua hierve a 100°C sea un litro o una gota (a la misma presión)." },
+            { question: "La sublimación es el cambio de estado de:", options: ["Líquido a gas", "Sólido a gas", "Gas a líquido", "Sólido a líquido"], correct: "Sólido a gas", justification: "La sublimación es el paso directo del estado sólido al estado gaseoso, sin pasar por el estado líquido. Un ejemplo común es el hielo seco (CO2 sólido)." },
+            { question: "Una mezcla homogénea es aquella en la que:", options: ["Sus componentes se distinguen a simple vista.", "Sus componentes no se pueden separar.", "No se distinguen sus componentes y presenta una sola fase.", "Solo está formada por elementos puros."], correct: "No se distinguen sus componentes y presenta una sola fase.", justification: "En una mezcla homogénea (o disolución), como el agua con sal, los componentes están distribuidos de manera uniforme y no son visibles individualmente." },
+            { question: "El método de separación que usarías para separar una mezcla de arena y agua es:", options: ["Destilación", "Evaporación", "Filtración", "Cristalización"], correct: "Filtración", justification: "La filtración es un método ideal para separar un sólido insoluble de un líquido, pasando la mezcla a través de un medio poroso (filtro) que retiene el sólido." },
+
+            // Estructura Atómica y Tabla Periódica
+            { question: "Las partículas subatómicas con carga positiva que se encuentran en el núcleo del átomo son los:", options: ["Electrones", "Neutrones", "Protones", "Isótopos"], correct: "Protones", justification: "El núcleo atómico está compuesto por protones (carga +1) y neutrones (sin carga). Los electrones (carga -1) orbitan alrededor del núcleo." },
+            { question: "El número atómico (Z) de un elemento representa el número de:", options: ["Neutrones en el núcleo.", "Protones en el núcleo.", "Electrones en el último nivel.", "Protones más neutrones."], correct: "Protones en el núcleo.", justification: "El número atómico es la 'identidad' de un elemento. Define el número de protones y, en un átomo neutro, también el número de electrones." },
+            { question: "Un átomo de sodio (Na) tiene 11 protones y 12 neutrones. ¿Cuál es su número de masa (A)?", options: ["11", "12", "1", "23"], correct: "23", justification: "El número de masa (A) es la suma de protones y neutrones en el núcleo. A = 11 (protones) + 12 (neutrones) = 23." },
+            { question: "Los elementos en la tabla periódica están ordenados según su:", options: ["Masa atómica creciente.", "Número atómico creciente.", "Orden alfabético.", "Año de descubrimiento."], correct: "Número atómico creciente.", justification: "La tabla periódica moderna, propuesta por Moseley, organiza los elementos en orden creciente de su número atómico (Z), lo que permite agruparlos por propiedades similares." },
+            { question: "Los elementos que se encuentran en la misma columna vertical de la tabla periódica pertenecen al mismo:", options: ["Periodo", "Bloque", "Grupo o familia", "Nivel de energía"], correct: "Grupo o familia", justification: "Los elementos de un mismo grupo o familia tienen el mismo número de electrones de valencia, lo que les confiere propiedades químicas muy similares." },
+            { question: "Los gases nobles (Grupo 18) son muy poco reactivos porque:", options: ["Son gases a temperatura ambiente.", "Tienen su último nivel de energía completo.", "Son los elementos más pesados.", "Tienen alta electronegatividad."], correct: "Tienen su último nivel de energía completo.", justification: "Según la regla del octeto, los átomos buscan tener 8 electrones en su capa de valencia para ser estables. Los gases nobles ya cumplen esta condición, por lo que no tienden a formar enlaces." },
+            { question: "Los isótopos de un elemento son átomos que tienen:", options: ["El mismo número de protones pero diferente número de neutrones.", "El mismo número de neutrones pero diferente número de protones.", "El mismo número de electrones y neutrones.", "Diferente número de protones y electrones."], correct: "El mismo número de protones pero diferente número de neutrones.", justification: "Al tener el mismo número de protones, los isótopos son del mismo elemento, pero al variar los neutrones, tienen diferente número de masa. Por ejemplo, Carbono-12 y Carbono-14." },
+            
+            // Enlaces Químicos y Nomenclatura
+            { question: "El enlace que se forma por la transferencia de electrones de un átomo metálico a un átomo no metálico es el enlace:", options: ["Covalente polar", "Metálico", "Iónico", "Covalente no polar"], correct: "Iónico", justification: "En un enlace iónico, el metal pierde electrones y se convierte en un catión (+), mientras que el no metal los gana y se convierte en un anión (-). La atracción electrostática entre estos iones forma el enlace." },
+            { question: "El cloruro de sodio (NaCl), o sal de mesa, es un ejemplo clásico de un compuesto con enlace:", options: ["Iónico", "Metálico", "Covalente polar", "Covalente no polar"], correct: "Iónico", justification: "El sodio (Na), un metal alcalino, transfiere su electrón de valencia al cloro (Cl), un halógeno no metálico, formando los iones Na+ y Cl-." },
+            { question: "En la molécula de agua (H₂O), los átomos de hidrógeno y oxígeno se unen mediante un enlace:", options: ["Iónico", "Covalente polar", "Metálico", "Covalente no polar"], correct: "Covalente polar", justification: "Se trata de un enlace covalente porque se comparten electrones entre no metales. Es polar porque el oxígeno es más electronegativo y atrae con más fuerza a los electrones, creando una distribución desigual de la carga." },
+            { question: "Tipo de enlace en el cual los átomos comparten electrones de manera equitativa, generalmente entre átomos idénticos.", options: ["Covalente no polar", "Covalente polar", "Iónico", "Puente de hidrógeno"], correct: "Covalente no polar", justification: "En moléculas como O₂, N₂ o Cl₂, los dos átomos son idénticos y tienen la misma electronegatividad, por lo que los electrones se comparten por igual, sin formar polos." },
+            { question: "¿Cuál es la fórmula química del dióxido de carbono?", options: ["CO", "C₂O", "CO₂", "C₂O₂"], correct: "CO₂", justification: "El prefijo 'di-' indica que hay dos átomos de oxígeno por cada átomo de carbono, por lo tanto la fórmula es CO₂." },
+            { question: "El compuesto H₂SO₄ recibe el nombre de:", options: ["Ácido sulfhídrico", "Ácido sulfuroso", "Dióxido de azufre", "Ácido sulfúrico"], correct: "Ácido sulfúrico", justification: "Es un oxácido formado por hidrógeno, azufre y oxígeno. Siguiendo las reglas de nomenclatura, el azufre actúa con su mayor estado de oxidación, por lo que termina en '-ico'." },
+            { question: "El número de oxidación del oxígeno en la mayoría de sus compuestos es:", options: ["+1", "+2", "-1", "-2"], correct: "-2", justification: "El oxígeno es muy electronegativo y tiende a ganar dos electrones para completar su octeto. Su número de oxidación más común es -2, excepto en peróxidos (-1) y cuando se une al flúor." },
+            
+            // Reacciones Químicas y Estequiometría
+            { question: "La Ley de la Conservación de la Masa, de Lavoisier, establece que:", options: ["La materia puede crearse en ciertas reacciones.", "La energía se transforma en masa.", "La masa total de los reactivos es igual a la masa total de los productos.", "El volumen de los gases es siempre constante."], correct: "La masa total de los reactivos es igual a la masa total de los productos.", justification: "Esta ley fundamental afirma que la materia no se crea ni se destruye durante una reacción química, solo se transforma. Por eso las ecuaciones químicas deben estar balanceadas." },
+            { question: "Una reacción de combustión completa siempre produce:", options: ["Agua y monóxido de carbono", "Dióxido de carbono y agua", "Oxígeno y un combustible", "Cenizas y humo"], correct: "Dióxido de carbono y agua", justification: "La combustión es la reacción de un compuesto orgánico (combustible) con oxígeno. Si la combustión es completa (con suficiente oxígeno), los productos son siempre CO₂ y H₂O." },
+            { question: "En una reacción química, las sustancias que se encuentran al inicio, antes de la transformación, se llaman:", options: ["Productos", "Catalizadores", "Reactivos", "Disolventes"], correct: "Reactivos", justification: "Los reactivos son las sustancias iniciales que reaccionan entre sí para dar lugar a los productos, que son las sustancias finales." },
+            { question: "Una sustancia ácida se caracteriza por:", options: ["Tener un pH mayor que 7 y sabor amargo.", "Tener un pH menor que 7 y sabor agrio.", "Tener un pH igual a 7 y ser neutra.", "No reaccionar con los metales."], correct: "Tener un pH menor que 7 y sabor agrio.", justification: "Según la escala de pH, las sustancias con un pH inferior a 7 son ácidas. Suelen tener sabor agrio y reaccionan con metales liberando hidrógeno." },
+            { question: "Una base o álcali es una sustancia que en la escala de pH tiene un valor:", options: ["Menor a 7", "Igual a 7", "Mayor a 7", "Igual a 0"], correct: "Mayor a 7", justification: "Las bases tienen un pH superior a 7, son de sabor amargo y al tacto se sienten jabonosas. Neutralizan a los ácidos." },
+            { question: "Cuando un ácido y una base reaccionan, producen sal y agua. Este tipo de reacción se llama:", options: ["Combustión", "Síntesis", "Neutralización", "Oxidación"], correct: "Neutralización", justification: "Es la reacción característica entre un ácido y una base. El resultado es una sal (formada por el catión de la base y el anión del ácido) y agua, con un pH resultante que tiende a la neutralidad (7)." },
+            { question: "El proceso de oxidación implica una _________ de electrones.", options: ["Pérdida", "Ganancia", "Compartición", "Transferencia nula"], correct: "Pérdida", justification: "En una reacción redox, la oxidación es el proceso en el que un átomo o ion pierde electrones, aumentando su número de oxidación. Siempre va acompañada de una reducción (ganancia de electrones)." },
+            
+            // Más Preguntas Variadas
+            { question: "El aire es un ejemplo de:", options: ["Elemento", "Compuesto", "Mezcla homogénea", "Mezcla heterogénea"], correct: "Mezcla homogénea", justification: "El aire es una mezcla de varios gases (nitrógeno, oxígeno, argón, etc.) que no se distinguen a simple vista, formando una sola fase gaseosa." },
+            { question: "Elemento metálico, líquido a temperatura ambiente, que es tóxico y se usaba en termómetros.", options: ["Bromo", "Sodio", "Mercurio", "Plomo"], correct: "Mercurio", justification: "El mercurio (Hg) es el único metal que es líquido en condiciones estándar de temperatura y presión. Su uso ha sido restringido por su alta toxicidad." },
+            { question: "El número de Avogadro (6.022 x 10²³) representa el número de partículas que hay en:", options: ["Un gramo de una sustancia", "Un mol de una sustancia", "Un litro de un gas", "Un átomo de carbono"], correct: "Un mol de una sustancia", justification: "El mol es la unidad de cantidad de sustancia en química. Un mol de cualquier cosa (átomos, moléculas, iones) siempre contiene el número de Avogadro de esas partículas." },
+            { question: "Son metales alcalinos, pertenecientes al Grupo 1 de la tabla periódica:", options: ["Calcio y Magnesio", "Litio y Sodio", "Helio y Neón", "Hierro y Cobre"], correct: "Litio y Sodio", justification: "Los metales del Grupo 1, como el Litio (Li), Sodio (Na) y Potasio (K), son llamados alcalinos. Son muy reactivos y tienen un solo electrón de valencia." },
+            { question: "La fórmula del agua es H₂O. Esto significa que cada molécula de agua está formada por:", options: ["Un átomo de hidrógeno y dos de oxígeno.", "Dos átomos de hidrógeno y un átomo de oxígeno.", "Dos moléculas de hidrógeno y una de oxígeno.", "Un ión de hidrógeno y dos de oxígeno."], correct: "Dos átomos de hidrógeno y un átomo de oxígeno.", justification: "El subíndice '2' después de la 'H' indica que hay dos átomos de hidrógeno, y la ausencia de subíndice en la 'O' implica que hay un solo átomo de oxígeno." },
+            { question: "El ion Ca²⁺ se formó porque un átomo de calcio neutro:", options: ["Ganó 2 electrones", "Perdió 2 protones", "Ganó 2 protones", "Perdió 2 electrones"], correct: "Perdió 2 electrones", justification: "Los átomos son neutros porque tienen igual número de protones (+) y electrones (-). Para formar un ion con carga +2 (un catión), el átomo debe perder 2 electrones, dejando un exceso de 2 protones." },
+            { question: "El ozono (O₃) es un ejemplo de una molécula _________ del oxígeno (O₂).", options: ["isótopo", "isómero", "alótropo", "ion"], correct: "alótropo", justification: "La alotropía es la propiedad de algunos elementos de existir en diferentes formas moleculares en el mismo estado físico. O₂ (oxígeno) y O₃ (ozono) son formas alotrópicas del elemento oxígeno." },
+            { question: "En la ecuación balanceada: 2 H₂ + O₂ → 2 H₂O, los números '2, 1, 2' se llaman:", options: ["Subíndices", "Números de oxidación", "Masas atómicas", "Coeficientes estequiométricos"], correct: "Coeficientes estequiométricos", justification: "Los coeficientes son los números grandes que se colocan delante de las fórmulas para balancear la ecuación, indicando la proporción molar en la que reaccionan y se producen las sustancias." },
+            { question: "¿Cuál de las siguientes sustancias es un compuesto?", options: ["Oro (Au)", "Oxígeno (O₂)", "Sal (NaCl)", "Aire"], correct: "Sal (NaCl)", justification: "Un compuesto está formado por la unión química de dos o más elementos diferentes en proporciones fijas. La sal (NaCl) está formada por sodio y cloro. El oro y el oxígeno son elementos y el aire es una mezcla." },
+            { question: "El vinagre es una solución acuosa de ácido acético, por lo que su pH será:", options: ["Mayor a 7", "Igual a 7", "Menor a 7", "Cercano a 14"], correct: "Menor a 7", justification: "Al ser una solución de un ácido, el vinagre tendrá un pH ácido, es decir, un valor por debajo de 7 en la escala de pH." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

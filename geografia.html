@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Geografía</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Geografía</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Geografía se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Geografía Física
+            { question: "Líneas imaginarias verticales que unen los polos Norte y Sur y sirven para determinar la longitud y los husos horarios.", options: ["Paralelos", "Trópicos", "Meridianos", "Círculos Polares"], correct: "Meridianos", justification: "Los meridianos son semicírculos que van de polo a polo. El meridiano de Greenwich (0°) es la referencia para la longitud y los husos horarios." },
+            { question: "El movimiento de la Tierra que origina la sucesión de los días y las noches es el de:", options: ["Traslación", "Precesión", "Nutación", "Rotación"], correct: "Rotación", justification: "El movimiento de rotación es el giro de la Tierra sobre su propio eje, que dura aproximadamente 24 horas y provoca la alternancia entre el día y la noche." },
+            { question: "La capa más externa y sólida de la Tierra, que está fragmentada en placas tectónicas, se denomina:", options: ["Manto", "Núcleo", "Litosfera", "Atmósfera"], correct: "Litosfera", justification: "La litosfera comprende la corteza terrestre y la parte superior del manto. Es rígida y está dividida en las placas tectónicas cuyo movimiento causa sismos y vulcanismo." },
+            { question: "El choque de dos placas tectónicas continentales da como resultado la formación de:", options: ["Dorsales oceánicas", "Volcanes submarinos", "Grandes cadenas montañosas", "Fosas abisales"], correct: "Grandes cadenas montañosas", justification: "Cuando dos placas continentales colisionan, al tener densidades similares, ninguna se subduce fácilmente, por lo que la corteza se pliega y se eleva, formando cordilleras como el Himalaya." },
+            { question: "Principal factor que determina la diversidad de climas en la Tierra.", options: ["La longitud", "La altitud", "La latitud", "La vegetación"], correct: "La latitud", justification: "La latitud (distancia al Ecuador) es el factor más importante, ya que determina el ángulo de incidencia de los rayos solares. A menor latitud (cerca del Ecuador), más calor se recibe; a mayor latitud (cerca de los polos), menos calor." },
+            { question: "Los ríos más caudalosos y largos del mundo, como el Amazonas y el Nilo, se localizan principalmente en la llanura:", options: ["Costera", "Aluvial", "Siberiana", "Glacial"], correct: "Aluvial", justification: "Las llanuras aluviales son formadas por la sedimentación de los ríos a lo largo de miles de años. Son extremadamente fértiles y extensas, permitiendo el desarrollo de grandes sistemas fluviales." },
+            { question: "El ciclo hidrológico describe el movimiento continuo del agua. ¿Cuál es el proceso por el cual el agua en estado gaseoso se convierte en líquido, formando las nubes?", options: ["Evaporación", "Condensación", "Precipitación", "Infiltración"], correct: "Condensación", justification: "La condensación ocurre cuando el vapor de agua en la atmósfera se enfría y se transforma en pequeñas gotas de agua líquida o cristales de hielo, que forman las nubes." },
+            { question: "Una especie endémica es aquella que:", options: ["Está en peligro de extinción.", "Fue introducida por el ser humano.", "Habita únicamente en una región geográfica específica del mundo.", "Migra a diferentes continentes cada año."], correct: "Habita únicamente en una región geográfica específica del mundo.", justification: "El endemismo se refiere a que una especie es nativa y exclusiva de un lugar determinado y no se encuentra de forma natural en ninguna otra parte." },
+            { question: "Región natural caracterizada por sus bajas temperaturas, suelo congelado (permafrost) y vegetación escasa de musgos y líquenes.", options: ["Desierto", "Selva", "Tundra", "Sabana"], correct: "Tundra", justification: "La tundra es el bioma de las regiones polares y de alta montaña. Su clima extremadamente frío impide el crecimiento de árboles y su suelo permanece congelado la mayor parte del año." },
+            { question: "Recurso natural que se considera no renovable porque su formación tarda millones de años.", options: ["Agua", "Petróleo", "Energía solar", "Madera"], correct: "Petróleo", justification: "Los combustibles fósiles como el petróleo, el carbón y el gas natural son no renovables, ya que se formaron a partir de materia orgánica hace millones de años y sus reservas son finitas." },
+
+            // Geografía Humana y Social
+            { question: "La densidad de población se calcula dividiendo:", options: ["El número total de habitantes entre la superficie del territorio.", "La superficie del territorio entre el número de habitantes.", "El número de nacimientos entre el número de muertes.", "El producto interno bruto entre el número de habitantes."], correct: "El número total de habitantes entre la superficie del territorio.", justification: "La densidad de población es una medida que indica cuántas personas viven por unidad de superficie (generalmente por kilómetro cuadrado) y sirve para entender la distribución de la población." },
+            { question: "Proceso por el cual la población se traslada de las zonas rurales a las ciudades.", options: ["Migración internacional", "Urbanización", "Globalización", "Suburbanización"], correct: "Urbanización", justification: "La urbanización es el fenómeno de crecimiento de las ciudades, impulsado principalmente por la migración de personas del campo en busca de mejores oportunidades económicas y servicios." },
+            { question: "La principal causa de la migración internacional en la actualidad es la búsqueda de:", options: ["Nuevos climas", "Mejores oportunidades económicas y laborales", "Aventuras turísticas", "Educación superior exclusivamente"], correct: "Mejores oportunidades económicas y laborales", justification: "Aunque hay muchas causas, la disparidad económica entre países es el motor principal de la migración internacional. Las personas se mueven buscando empleo y una mejor calidad de vida." },
+            { question: "Las pirámides de población con una base muy ancha y una cúspide estrecha son características de países con:", options: ["Una población envejecida y baja natalidad.", "Una población joven y alta natalidad.", "Una tasa de mortalidad muy baja.", "Un equilibrio entre nacimientos y muertes."], correct: "Una población joven y alta natalidad.", justification: "Una base ancha indica un gran número de niños y jóvenes (alta tasa de natalidad), mientras que la cúspide estrecha muestra una baja esperanza de vida. Este perfil es típico de países en desarrollo." },
+            { question: "La frontera entre México y Estados Unidos es un ejemplo de frontera:", options: ["Natural y cultural", "Artificial y política", "Económica y religiosa", "Lingüística y climática"], correct: "Artificial y política", justification: "Aunque una parte sigue el curso del Río Bravo (natural), gran parte de la frontera fue establecida por tratados y acuerdos políticos, marcada por monumentos y barreras, lo que la convierte en artificial y política." },
+            { question: "La Organización de las Naciones Unidas (ONU) fue creada después de la Segunda Guerra Mundial con el propósito principal de:", options: ["Fomentar el comercio global.", "Promover una sola cultura mundial.", "Mantener la paz y la seguridad internacionales.", "Establecer una moneda única."], correct: "Mantener la paz y la seguridad internacionales.", justification: "La ONU se fundó en 1945 para prevenir futuros conflictos globales, promover la cooperación entre naciones y proteger los derechos humanos." },
+            { question: "El multiculturalismo se refiere a:", options: ["La dominación de una cultura sobre las demás.", "La coexistencia de diversas culturas en un mismo territorio.", "La fusión de todas las culturas en una sola.", "La creencia de que una cultura es superior a otras."], correct: "La coexistencia de diversas culturas en un mismo territorio.", justification: "El multiculturalismo reconoce y valora la diversidad cultural, promoviendo el respeto y la convivencia entre diferentes grupos étnicos, religiosos y lingüísticos en una misma sociedad." },
+            { question: "Es una característica de un país desarrollado:", options: ["Alta tasa de analfabetismo.", "Bajo Producto Interno Bruto (PIB) per cápita.", "Economía basada en la agricultura de subsistencia.", "Alto Índice de Desarrollo Humano (IDH)."], correct: "Alto Índice de Desarrollo Humano (IDH).", justification: "El IDH es un indicador que mide la calidad de vida combinando la esperanza de vida, la educación y el ingreso per cápita. Los países desarrollados tienen valores de IDH muy altos." },
+            { question: "Un asentamiento humano irregular se caracteriza por:", options: ["Tener todos los servicios públicos.", "Estar planeado por arquitectos.", "Carecer de servicios básicos y tenencia segura de la tierra.", "Ubicarse en zonas de bajo riesgo."], correct: "Carecer de servicios básicos y tenencia segura de la tierra.", justification: "Estos asentamientos, a menudo llamados 'ciudades perdidas' o 'favelas', surgen sin planificación y se ubican en zonas de riesgo, careciendo de infraestructura como agua potable, drenaje y electricidad." },
+            
+            // Geografía Económica
+            { question: "La agricultura de subsistencia se diferencia de la agricultura comercial en que la primera:", options: ["Utiliza alta tecnología y maquinaria.", "Produce para el autoconsumo de la familia.", "Exporta toda su producción a otros países.", "Se enfoca en un solo tipo de cultivo (monocultivo)."], correct: "Produce para el autoconsumo de la familia.", justification: "La agricultura de subsistencia tiene como objetivo principal alimentar al agricultor y su familia, con pocos excedentes para la venta, a diferencia de la comercial, que produce a gran escala para el mercado." },
+            { question: "La principal zona de extracción de petróleo en México se localiza en:", options: ["La Península de Baja California.", "La Sierra Madre Occidental.", "La llanura costera del Golfo de México y su plataforma continental.", "El Altiplano Central."], correct: "La llanura costera del Golfo de México y su plataforma continental.", justification: "Estados como Campeche, Tabasco y Veracruz, y las aguas someras del Golfo (Sonda de Campeche), concentran la mayor parte de la producción petrolera del país." },
+            { question: "El TLCAN (ahora T-MEC) es un acuerdo económico que integra a los siguientes países:", options: ["México, Brasil y Argentina.", "México, Estados Unidos y Canadá.", "México, Colombia y Venezuela.", "Toda América Latina."], correct: "México, Estados Unidos y Canadá.", justification: "El Tratado de Libre Comercio de América del Norte (TLCAN), modernizado como T-MEC, es un bloque económico que busca facilitar el comercio entre estas tres naciones norteamericanas." },
+            { question: "Actividad económica que pertenece al sector terciario de la economía.", options: ["Pesca", "Minería", "Industria automotriz", "Turismo"], correct: "Turismo", justification: "El sector terciario agrupa las actividades que no producen bienes materiales, sino servicios. El turismo, el comercio, la banca y la educación son ejemplos de este sector." },
+            { question: "Una de las principales consecuencias económicas de la globalización es:", options: ["El aislamiento de los países pobres.", "El aumento de la interdependencia entre las economías nacionales.", "La desaparición de las empresas transnacionales.", "La disminución del comercio internacional."], correct: "El aumento de la interdependencia entre las economías nacionales.", justification: "La globalización ha creado un sistema económico mundial donde las decisiones y eventos en un país pueden tener repercusiones inmediatas y significativas en otros, creando una fuerte interdependencia." },
+            { question: "La región de los Grandes Lagos en América del Norte es una de las zonas industriales más importantes del mundo debido a su abundancia de:", options: ["Petróleo y gas natural.", "Mano de obra barata.", "Carbón y hierro.", "Cultivos de café y cacao."], correct: "Carbón y hierro.", justification: "La presencia masiva de depósitos de carbón y mineral de hierro en esta región fue el motor que impulsó su desarrollo industrial, especialmente en la siderurgia y la manufactura automotriz." },
+            { question: "Principal puerto comercial de México en la costa del Océano Pacífico.", options: ["Veracruz", "Progreso", "Manzanillo", "Tampico"], correct: "Manzanillo", justification: "El puerto de Manzanillo, en Colima, es el más importante de México en términos de movimiento de contenedores y carga comercial en la costa del Pacífico, siendo una puerta clave para el comercio con Asia." },
+            
+            // Más Preguntas Variadas
+            { question: "El movimiento aparente del Sol y las estrellas en el cielo de este a oeste es una consecuencia del:", options: ["Movimiento de traslación de la Tierra", "Efecto Coriolis", "Movimiento de rotación de la Tierra", "La inclinación del eje terrestre"], correct: "Movimiento de rotación de la Tierra", justification: "La Tierra gira de oeste a este. Este movimiento hace que, desde nuestra perspectiva, parezca que los astros se mueven en la dirección opuesta, de este a oeste." },
+            { question: "La Sierra Madre Occidental en México es un ejemplo de relieve formado principalmente por:", options: ["Actividad volcánica", "Sedimentación marina", "Plegamiento de placas", "Erosión glacial"], correct: "Actividad volcánica", justification: "Esta gran cordillera está formada por una extensa meseta y barrancas creadas por millones de años de intensa actividad volcánica, lo que le da su característico paisaje." },
+            { question: "La corriente marina fría que modera el clima de las costas de Perú y Chile y provoca una gran riqueza pesquera es la corriente de:", options: ["El Niño", "El Golfo", "Humboldt", "Kuroshio"], correct: "Humboldt", justification: "La corriente de Humboldt transporta aguas frías y ricas en nutrientes desde la Antártida hacia el norte, lo que enfría la costa y sostiene un ecosistema marino excepcionalmente productivo." },
+            { question: "Si en Londres (meridiano 0°) son las 12:00 PM, ¿qué hora es aproximadamente en la Ciudad de México, que se encuentra en el huso horario de -6 horas?", options: ["6:00 PM", "6:00 AM", "12:00 AM (medianoche)", "8:00 AM"], correct: "6:00 AM", justification: "Al estar en el huso -6, se deben restar 6 horas a la hora de Londres. 12:00 PM - 6 horas = 6:00 AM." },
+            { question: "El desarrollo sustentable busca equilibrar tres pilares fundamentales:", options: ["Economía, política y cultura.", "Sociedad, medio ambiente y economía.", "Tecnología, ciencia y educación.", "Industria, agricultura y comercio."], correct: "Sociedad, medio ambiente y economía.", justification: "El desarrollo sustentable propone satisfacer las necesidades del presente (pilar social y económico) sin comprometer la capacidad de las futuras generaciones para satisfacer las suyas (pilar ambiental)." },
+            { question: "¿Cuál de estos países es conocido por tener una alta vulnerabilidad a sismos y tsunamis por estar en el Cinturón de Fuego del Pacífico?", options: ["Brasil", "Egipto", "Japón", "Sudáfrica"], correct: "Japón", justification: "Japón se encuentra en la convergencia de cuatro placas tectónicas, lo que lo convierte en una de las zonas sísmicas más activas del mundo y muy propenso a tsunamis." },
+            { question: "Principal gas responsable del calentamiento global antropogénico.", options: ["Oxígeno", "Nitrógeno", "Dióxido de carbono (CO2)", "Argón"], correct: "Dióxido de carbono (CO2)", justification: "Aunque hay otros gases de efecto invernadero, el CO2, liberado principalmente por la quema de combustibles fósiles, es el que más ha contribuido al calentamiento global provocado por el ser humano." },
+            { question: "Las zonas económicas exclusivas (ZEE) son franjas marítimas donde un Estado costero tiene derechos soberanos para la exploración y explotación de:", options: ["Todos los barcos que pasen", "Recursos naturales marinos", "Instalaciones militares de otros países", "Cables submarinos únicamente"], correct: "Recursos naturales marinos", justification: "La ZEE se extiende hasta 200 millas náuticas desde la costa y le da al país el derecho exclusivo sobre los recursos pesqueros y minerales que se encuentren en esa zona." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

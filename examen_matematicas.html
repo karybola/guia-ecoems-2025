@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Matemáticas</title>
+    <style>
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button, .back-link {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .back-link:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn { background-color: #6c757d; }
+        #resetBtn:hover { background-color: #5a6268; }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item { margin-bottom: 25px; padding: 20px; border-radius: 8px; border-left-width: 6px; border-left-style: solid; }
+        .feedback-item.correct { border-left-color: var(--color-correcto); background-color: #e9f7ef; }
+        .feedback-item.incorrect { border-left-color: var(--color-incorrecto); background-color: #fdeded; }
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; font-style: italic; color: #555; }
+        .back-link { font-size: 1em; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Simulacro ECOEMS 2025: Matemáticas</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer"></div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a Intentar</button>
+                <a href="guia_neptur.html" class="back-link">Volver al Menú Principal</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const questionsData = [
+                // Aritmética y Sucesiones
+                { question: "¿Cuál es el resultado de la operación 50 - [3 × (8 - 6) ÷ 2] + 4?", options: ["25", "51", "43", "47"], correct: "51", justification: "Jerarquía de operaciones: 1. Paréntesis (8-6)=2. 2. Multiplicación 3×2=6. 3. División 6÷2=3. 4. Corchetes [3]. 5. Sumas y restas: 50-3+4 = 47+4 = 51." },
+                { question: "En una tienda, un pantalón de $800 tiene un 25% de descuento. ¿Cuál es el precio final?", options: ["$600", "$200", "$775", "$650"], correct: "$600", justification: "El 25% (o 1/4) de $800 es $200. El precio final es el original menos el descuento: $800 - $200 = $600." },
+                { question: "¿Qué número continúa la sucesión 3, 7, 15, 31, 63, ...?", options: ["127", "94", "125", "113"], correct: "127", justification: "La regla de la sucesión es multiplicar el número anterior por 2 y sumarle 1. (63 × 2) + 1 = 126 + 1 = 127." },
+                { question: "El resultado de la operación (5/2) × (3/4) ÷ (1/2) es:", options: ["15/4", "15/8", "15/2", "30/8"], correct: "15/4", justification: "Multiplicación: (5/2)×(3/4) = 15/8. División: (15/8)÷(1/2) es igual a (15/8)×(2/1) = 30/8, que simplificado es 15/4." },
+                { question: "Si 4 llaves de agua llenan una piscina en 10 horas, ¿cuántas horas tardarán 8 llaves del mismo tipo en llenarla?", options: ["20 horas", "10 horas", "5 horas", "2.5 horas"], correct: "5 horas", justification: "Es una proporción inversa. A más llaves, menos tiempo. (4 llaves × 10 horas) / 8 llaves = 40 / 8 = 5 horas." },
+                { question: "Un auto recorre 180 km con 12 litros de gasolina. ¿Cuántos kilómetros puede recorrer con 20 litros?", options: ["300 km", "240 km", "360 km", "280 km"], correct: "300 km", justification: "Es una proporción directa. Primero, calculamos cuántos km recorre por litro: 180 km / 12 L = 15 km/L. Luego, multiplicamos por los nuevos litros: 15 km/L × 20 L = 300 km." },
+                
+                // Álgebra
+                { question: "Al simplificar la expresión 2a - { -x + a - 1 } - { -a + x - 3 }, ¿qué se obtiene?", options: ["4a + 4", "2a - 2x + 2", "4a - 2x + 4", "2a + 4"], correct: "4a - 2x + 4", justification: "Quitando llaves: 2a + x - a + 1 + a - x + 3. Agrupando términos semejantes: (2a - a + a) + (x - x) + (1 + 3) = 2a + 0 + 4. ¡Error en el cálculo! Repitiendo: 2a - (-x + a - 1) - (-a + x - 3) = 2a + x - a + 1 + a - x + 3. Agrupando: (2a - a + a) + (x - x) + (1 + 3) = 2a + 4. Revisando la pregunta, es posible que el signo fuera distinto. Asumiendo la expresión correcta. Vamos a re-evaluar la justificación. 2a - (-x + a - 1) = 2a+x-a+1. -(-a+x-3) = +a-x+3. Juntando: (2a-a+a) + (x-x) + (1+3) = 2a+4. Ninguna opción es 2a+4. Revisemos mi operación. 2a - {-x+a-1} = 2a+x-a+1 = a+x+1. -( -a+x-3) = a-x+3. Sumando ambas partes: (a+x+1) + (a-x+3) = 2a+4. La opción 4a-2x+4 es incorrecta. Vamos a suponer que hay un error en mis opciones y la justificación debe ser correcta. La opción correcta es 2a+4. Cambiaré las opciones para que una sea la correcta. Cambiando pregunta y respuesta para ser consistentes." , question: "Simplifica la expresión: 3x - (5y - 2x) + (-3y + x)", correct: "6x - 8y", options: ["5x - 8y", "6x - 8y", "4x - 2y", "6x - 2y"], justification: "Se quitan los paréntesis: 3x - 5y + 2x - 3y + x. Se agrupan términos semejantes: (3x + 2x + x) + (-5y - 3y) = 6x - 8y." },
+                { question: "El resultado de desarrollar (2m - 5)² es:", options: ["4m² - 25", "4m² - 20m + 25", "2m² - 20m + 25", "4m² - 10m + 25"], correct: "4m² - 20m + 25", justification: "Es un binomio al cuadrado (a-b)² = a² - 2ab + b². Aquí a=2m y b=5. El resultado es (2m)² - 2(2m)(5) + 5² = 4m² - 20m + 25." },
+                { question: "La factorización de x² - 10x + 21 es:", options: ["(x - 21)(x + 1)", "(x + 7)(x + 3)", "(x - 7)(x - 3)", "(x - 10)(x + 21)"], correct: "(x - 7)(x - 3)", justification: "Se buscan dos números que multiplicados den +21 y sumados den -10. Esos números son -7 y -3." },
+                { question: "En un corral hay conejos y gallinas. Si en total hay 35 cabezas y 94 patas, ¿cuántos conejos hay?", options: ["12", "23", "15", "20"], correct: "12", justification: "Sistema de ecuaciones: C+G=35 (cabezas) y 4C+2G=94 (patas). Despejando G=35-C y sustituyendo: 4C+2(35-C)=94 -> 4C+70-2C=94 -> 2C=24 -> C=12." },
+                { question: "Resuelve la ecuación: 5(x - 1) = 3(x + 3)", options: ["x = 7", "x = 4", "x = 2", "x = -2"], correct: "x = 7", justification: "Se expande: 5x - 5 = 3x + 9. Se agrupan términos: 5x - 3x = 9 + 5 -> 2x = 14 -> x = 7." },
+                { question: "Una de las raíces de la ecuación x² + 2x - 15 = 0 es:", options: ["-3", "5", "3", "15"], correct: "3", justification: "Factorizando: (x+5)(x-3) = 0. Las raíces son los valores de x que hacen cero cada factor: x = -5 y x = 3." },
+                { question: "El producto de (y + 9)(y - 9) es un ejemplo de:", options: ["Binomio al cuadrado", "Término común", "Diferencia de cuadrados", "Binomios con término semejante"], correct: "Diferencia de cuadrados", justification: "Es un producto notable de la forma (a+b)(a-b), cuyo resultado es a² - b². El resultado sería y² - 81." },
+                { question: "Si el triple de la edad de Juan menos 5 años es 40, ¿qué edad tiene Juan?", options: ["10 años", "15 años", "12 años", "18 años"], correct: "15 años", justification: "La ecuación es 3J - 5 = 40. Se suma 5 a ambos lados: 3J = 45. Se divide entre 3: J = 15." },
+                { question: "En la fórmula V = (1/3)πr²h, si se despeja la altura (h), ¿cuál es la expresión correcta?", options: ["h = 3V / (πr²)", "h = V / (3πr²)", "h = 3πr² / V", "h = V - (1/3)πr²"], correct: "h = 3V / (πr²)", justification: "Para despejar h, el 3 que divide pasa multiplicando (3V = πr²h). Luego, π y r² que multiplican a h, pasan dividiendo. Queda h = 3V / (πr²)." },
+                { question: "Encuentra la solución del sistema: x + 2y = 8; 3x - y = 3", options: ["x=2, y=3", "x=4, y=2", "x=-2, y=5", "x=3, y=2.5"], correct: "x=2, y=3", justification: "Multiplicando la segunda ecuación por 2: 6x - 2y = 6. Sumándola con la primera (x+2y=8), se obtiene 7x = 14 -> x=2. Sustituyendo en la primera: 2 + 2y = 8 -> 2y = 6 -> y=3." },
+                
+                // Geometría
+                { question: "¿Cuál es el área de un triángulo cuya base es 15 cm y su altura es 8 cm?", options: ["120 cm²", "60 cm²", "23 cm²", "90 cm²"], correct: "60 cm²", justification: "La fórmula del área de un triángulo es (base × altura) / 2. (15 × 8) / 2 = 120 / 2 = 60 cm²." },
+                { question: "La hipotenusa de un triángulo rectángulo mide 13 cm y uno de sus catetos mide 5 cm. ¿Cuánto mide el otro cateto?", options: ["8 cm", "18 cm", "144 cm", "12 cm"], correct: "12 cm", justification: "Por el Teorema de Pitágoras, a² + b² = c². Entonces, b² = c² - a² = 13² - 5² = 169 - 25 = 144. El cateto es b = √144 = 12 cm." },
+                { question: "Calcula el perímetro de una circunferencia cuyo radio es de 10 m. (Usa π ≈ 3.1416)", options: ["31.416 m", "62.832 m", "314.16 m", "100 m"], correct: "62.832 m", justification: "El perímetro es P = 2πr. P = 2 × 3.1416 × 10 = 62.832 m." },
+                { question: "¿Cuál es el volumen de un cubo cuya arista mide 4 cm?", options: ["16 cm³", "12 cm³", "64 cm³", "48 cm³"], correct: "64 cm³", justification: "El volumen de un cubo es lado al cubo (L³). V = 4³ = 4 × 4 × 4 = 64 cm³." },
+                { question: "La suma de los ángulos interiores de un pentágono es:", options: ["360°", "720°", "540°", "180°"], correct: "540°", justification: "La fórmula es 180° × (n-2), donde n es el número de lados. Para un pentágono (n=5), es 180° × (5-2) = 180° × 3 = 540°." },
+                { question: "Un jardín rectangular mide 25 m de largo y 10 m de ancho. ¿Cuál es su área?", options: ["70 m²", "35 m²", "250 m²", "125 m²"], correct: "250 m²", justification: "El área de un rectángulo es largo por ancho. A = 25 m × 10 m = 250 m²." },
+                { question: "Si dos ángulos de un triángulo miden 50° y 70°, ¿cuánto mide el tercer ángulo?", options: ["60°", "50°", "120°", "180°"], correct: "60°", justification: "La suma de los ángulos internos de cualquier triángulo es siempre 180°. 180° - 50° - 70° = 60°." },
+                { question: "El área de un círculo es de 100π cm². ¿Cuánto mide su radio?", options: ["10π cm", "50 cm", "10 cm", "20 cm"], correct: "10 cm", justification: "La fórmula del área es A = πr². Si 100π = πr², podemos cancelar π en ambos lados, quedando 100 = r². El radio es r = √100 = 10 cm." },
+                
+                // Estadística y Probabilidad
+                { question: "Las edades de 5 amigos son 15, 17, 16, 15, 17. ¿Cuál es la moda?", options: ["16", "15 y 17", "15", "17"], correct: "15 y 17", justification: "La moda es el valor que más se repite. En este caso, tanto el 15 como el 17 aparecen dos veces, por lo que el conjunto es bimodal." },
+                { question: "Al lanzar dos monedas al mismo tiempo, ¿cuál es la probabilidad de que ambas caigan en 'águila'?", options: ["1/2", "1/3", "1/4", "2/4"], correct: "1/4", justification: "El espacio muestral es {AA, AS, SA, SS}, con 4 resultados posibles. Solo uno de ellos es {AA}, por lo que la probabilidad es de 1/4." },
+                { question: "Las calificaciones de un estudiante son 7, 8, 10, 7, 9. ¿Cuál es la mediana?", options: ["8", "10", "7", "8.2"], correct: "8", justification: "Para encontrar la mediana, primero se ordenan los datos: 7, 7, 8, 9, 10. El valor que queda en el centro es 8." },
+                { question: "En una caja hay 5 bolas rojas, 8 azules y 7 verdes. ¿Cuál es la probabilidad de sacar una bola que NO sea verde?", options: ["7/20", "13/20", "8/20", "5/20"], correct: "13/20", justification: "Hay un total de 5+8+7=20 bolas. Las que no son verdes son las 5 rojas y las 8 azules, que suman 13. La probabilidad es de 13/20." },
+                { question: "¿Cuál es el promedio (media aritmética) de los números: 10, 20, 30, 40, 50?", options: ["25", "30", "150", "20"], correct: "30", justification: "Se suman todos los valores y se dividen entre la cantidad de valores: (10+20+30+40+50) / 5 = 150 / 5 = 30." },
+                
+                // Razonamiento Matemático
+                { question: "Un reloj se adelanta 3 minutos cada hora. Si se pone a la hora correcta a las 9:00 a.m., ¿qué hora marcará a las 5:00 p.m. del mismo día?", options: ["5:24 p.m.", "5:30 p.m.", "5:15 p.m.", "5:21 p.m."], correct: "5:24 p.m.", justification: "De las 9:00 a.m. a las 5:00 p.m. han pasado 8 horas. Si se adelanta 3 minutos por hora, el adelanto total será de 8 × 3 = 24 minutos. Por lo tanto, marcará las 5:24 p.m." },
+                { question: "¿Cuántos cuadros hay en total en un tablero de ajedrez de 8x8?", options: ["64", "128", "204", "100"], correct: "204", justification: "Esta es una pregunta clásica de razonamiento. Se refiere a cuadros de todos los tamaños. La suma es 1²+2²+3²+4²+5²+6²+7²+8² = 1+4+9+16+25+36+49+64 = 204." },
+                { question: "Si hoy es martes, ¿qué día de la semana será dentro de 100 días?", options: ["Jueves", "Viernes", "Miércoles", "Sábado"], correct: "Jueves", justification: "Cada 7 días se repite el día de la semana. Dividimos 100 entre 7: 100 ÷ 7 = 14 con un residuo de 2. Esto significa que pasarán 14 semanas completas y 2 días adicionales. Dos días después de martes es jueves." },
+                { question: "Se necesita pintar una pared cuadrada que mide 5 metros de lado. Si una lata de pintura cubre 10 m², ¿cuántas latas se necesitan?", options: ["2 latas", "3 latas", "2.5 latas", "5 latas"], correct: "3 latas", justification: "El área de la pared es 5m × 5m = 25 m². Si cada lata cubre 10 m², se necesitan 25/10 = 2.5 latas. Como no se pueden comprar medias latas, se deben comprar 3 latas." },
+                { question: "En una fila de 5 sillas se sientan 3 personas. ¿De cuántas maneras diferentes pueden sentarse?", options: ["15", "125", "60", "10"], correct: "60", justification: "Es una permutación, ya que el orden importa. P(n,k) = n!/(n-k)!. P(5,3) = 5!/(5-3)! = 5!/2! = (5×4×3×2×1)/(2×1) = 120/2 = 60." },
+                { question: "Un padre le da a su hijo $1 el primer día, $2 el segundo, $4 el tercero, $8 el cuarto, y así sucesivamente. ¿Cuánto dinero recibirá el hijo el día 10?", options: ["$1024", "$10", "$512", "$256"], correct: "$512", justification: "La cantidad es una potencia de 2, donde el exponente es el día menos 1 (2^(n-1)). Para el día 10, es 2^(10-1) = 2⁹ = 512." }
+            ];
+
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                shuffle(questionsData).forEach((q, index) => { // Baraja el orden de las preguntas
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+                    const shuffledOptions = shuffle([...q.options]);
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const questionBlocks = document.querySelectorAll('.question-block');
+                const formData = new FormData(examForm);
+                
+                // Reordenar las preguntas en el feedback para que coincidan con el orden original
+                const originalQuestionsInOrder = [];
+                questionBlocks.forEach((block, index) => {
+                    const questionText = block.querySelector('p').innerHTML;
+                    const originalIndex = questionsData.findIndex(q => `<strong>${index + 1}.</strong> ${q.question}` === questionText);
+                    if (originalIndex !== -1) {
+                         originalQuestionsInOrder.push({
+                            questionData: questionsData[originalIndex],
+                            userAnswer: formData.get(`q${index}`),
+                            displayIndex: index + 1
+                         });
+                    }
+                });
+                
+                originalQuestionsInOrder.sort((a,b) => a.displayIndex - b.displayIndex);
+
+                originalQuestionsInOrder.forEach(item => {
+                    const { questionData: q, userAnswer, displayIndex } = item;
+                    const isCorrect = userAnswer === q.correct;
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    let feedbackHTML = `
+                        <h4>${displayIndex}. ${q.question}</h4>
+                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+
+            initExam();
+        });
+    </script>
+</body>
+</html>

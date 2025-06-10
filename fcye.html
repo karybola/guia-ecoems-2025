@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Formación Cívica y Ética</title>
+    <style>
+        /* --- Estilos NEPTUR (Mismos que los otros exámenes para consistencia) --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-blanco);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-caja);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neptur-azul-primario);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--neptur-azul-secundario);
+            margin: 0;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-block p {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .options-container label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .options-container label:hover {
+            background-color: #e9ecef;
+            border-color: var(--neptur-azul-primario);
+        }
+
+        .options-container input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--neptur-azul-primario);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--neptur-azul-primario);
+            color: var(--color-blanco);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: var(--neptur-azul-secundario);
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background-color: #6c757d;
+        }
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+
+        .hidden { display: none; }
+        
+        #results { padding-top: 20px; }
+
+        #score {
+            font-size: 2em;
+            text-align: center;
+            color: var(--color-blanco);
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+        
+        .feedback-item.correct {
+            border-left-color: var(--color-correcto);
+            background-color: #e9f7ef;
+        }
+
+        .feedback-item.incorrect {
+            border-left-color: var(--color-incorrecto);
+            background-color: #fdeded;
+        }
+
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-style: italic;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 25px; }
+            h1 { font-size: 1.5em; }
+            button { width: 100%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Asignatura: Formación Cívica y Ética</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas de Formación Cívica y Ética se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer">
+                <!-- La retroalimentación se cargará aquí -->
+            </div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a responder</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            // Identidad Personal y Cuidado de Sí
+            { question: "La capacidad de tomar decisiones propias, pensar por uno mismo y regular la propia conducta se conoce como:", options: ["Heteronomía", "Autonomía", "Empatía", "Asertividad"], correct: "Autonomía", justification: "La autonomía es la capacidad de una persona para establecer sus propias normas y regirse por ellas a la hora de tomar decisiones, en oposición a la heteronomía, donde las normas vienen del exterior." },
+            { question: "Un adolescente decide no consumir drogas en una fiesta a pesar de la presión de sus amigos. Esta acción es un ejemplo de:", options: ["Libertinaje", "Ejercicio responsable de la libertad", "Falta de socialización", "Conformidad"], correct: "Ejercicio responsable de la libertad", justification: "La libertad implica la capacidad de elegir, y ejercerla responsablemente significa tomar decisiones informadas que protejan la propia integridad y bienestar, aun frente a la presión social." },
+            { question: "La empatía es la capacidad de:", options: ["Imponer las propias ideas a los demás.", "Sentir lástima por los demás.", "Comprender los sentimientos y emociones de otra persona.", "Juzgar las acciones de los demás."], correct: "Comprender los sentimientos y emociones de otra persona.", justification: "La empatía es la habilidad de 'ponerse en el lugar del otro', comprendiendo su perspectiva y sintiendo lo que esa persona siente, lo cual es fundamental para las relaciones interpersonales." },
+            { question: "Son cambios físicos, sociales y afectivos que caracterizan a la adolescencia:", options: ["Búsqueda de identidad, cambios hormonales y valoración de la amistad.", "Estabilidad emocional, independencia económica y finalización de estudios.", "Desarrollo del lenguaje, juego simbólico y apego a los padres.", "Jubilación, disminución de la capacidad física y reflexión sobre la vida."], correct: "Búsqueda de identidad, cambios hormonales y valoración de la amistad.", justification: "La adolescencia es una etapa de transición marcada por profundos cambios biológicos (pubertad), la construcción de una identidad propia y la reconfiguración de las relaciones sociales, dando más peso a los pares." },
+            { question: "Para tomar una decisión informada y responsable, es necesario:", options: ["Actuar por impulso y sin pensar.", "Seguir siempre la opinión de la mayoría.", "Analizar las opciones, prever consecuencias y basarse en valores.", "Dejar que otros decidan por uno mismo."], correct: "Analizar las opciones, prever consecuencias y basarse en valores.", justification: "Una decisión responsable no es impulsiva, sino que implica un proceso de reflexión donde se consideran las alternativas, las posibles consecuencias de cada una y se elige en función de los propios principios y valores." },
+            
+            // Vida en Sociedad y Derechos Humanos
+            { question: "Principio ético fundamental que reconoce que todos los seres humanos nacen libres e iguales y merecen el mismo respeto.", options: ["Justicia", "Legalidad", "Dignidad humana", "Solidaridad"], correct: "Dignidad humana", justification: "La dignidad humana es el valor intrínseco de cada persona, independientemente de sus características. Es el pilar sobre el que se construyen todos los derechos humanos." },
+            { question: "Las normas ___________ son aquellas cuyo incumplimiento conlleva una sanción impuesta por el Estado (multa, cárcel, etc.).", options: ["morales", "sociales", "religiosas", "jurídicas"], correct: "jurídicas", justification: "Las normas jurídicas son las leyes creadas por el Estado. Son obligatorias para todos (heterónomas), y su incumplimiento acarrea una sanción legal (son coercibles)." },
+            { question: "La discriminación es una práctica que atenta directamente contra el principio de:", options: ["Soberanía", "Legalidad", "Igualdad", "Libertad de expresión"], correct: "Igualdad", justification: "Discriminar es dar un trato desigual o de inferioridad a personas por motivos de origen, género, religión, etc., lo cual viola el principio de que todos somos iguales ante la ley y en dignidad." },
+            { question: "Los Derechos Humanos son universales, lo que significa que:", options: ["Solo aplican en países democráticos.", "Se aplican a todos los seres humanos sin distinción alguna.", "Pueden ser suspendidos por el gobierno en cualquier momento.", "Son diferentes para cada cultura."], correct: "Se aplican a todos los seres humanos sin distinción alguna.", justification: "La universalidad es una característica esencial de los Derechos Humanos; pertenecen a todas las personas por el simple hecho de serlo, sin importar su nacionalidad, etnia, género, religión o cualquier otra condición." },
+            { question: "Un conflicto entre vecinos por el ruido excesivo debe resolverse preferentemente a través del:", options: ["Uso de la violencia", "Diálogo y la mediación", "Ignorar el problema hasta que desaparezca", "Llamar directamente a la policía sin hablar antes"], correct: "Diálogo y la mediación", justification: "La resolución pacífica de conflictos prioriza la comunicación y la negociación. El diálogo permite a las partes expresar sus necesidades y la mediación (con un tercero neutral) ayuda a encontrar una solución satisfactoria para ambos." },
+            { question: "Cuando un grupo de personas expresa públicamente su desacuerdo con una política gubernamental mediante una marcha pacífica, están ejerciendo su derecho a la:", options: ["Educación", "Salud", "Propiedad", "Manifestación"], correct: "Manifestación", justification: "El derecho a la manifestación y a la libertad de reunión pacífica es fundamental en una democracia para que los ciudadanos puedan expresar sus opiniones y demandas a las autoridades." },
+            
+            // Democracia y Organización del Estado Mexicano
+            { question: "Son los tres elementos que componen al Estado Mexicano:", options: ["Poder Ejecutivo, Legislativo y Judicial.", "Partidos políticos, elecciones y ciudadanos.", "Territorio, población y gobierno.", "Constitución, leyes y reglamentos."], correct: "Territorio, población y gobierno.", justification: "Todo Estado, para ser considerado como tal, debe contar con estos tres elementos: un espacio geográfico definido (territorio), un conjunto de personas que lo habitan (población) y una organización política que ejerce el poder (gobierno)." },
+            { question: "En México, el poder supremo del Estado se divide para su ejercicio en:", options: ["Federal, Estatal y Municipal.", "Ejecutivo, Legislativo y Judicial.", "Ciudadanos, partidos y gobierno.", "Secretarías, departamentos y oficinas."], correct: "Ejecutivo, Legislativo y Judicial.", justification: "El artículo 49 de la Constitución establece la clásica división de poderes para evitar la concentración de poder: el Ejecutivo (presidente), el Legislativo (Congreso de la Unión) y el Judicial (Suprema Corte y tribunales)." },
+            { question: "La forma de gobierno en México, según la Constitución, es una República representativa, democrática, laica y:", options: ["Federal", "Centralista", "Monárquica", "Parlamentaria"], correct: "Federal", justification: "México es una federación, lo que significa que está compuesto por estados libres y soberanos en su régimen interior, pero unidos en un pacto federal. Esto se opone al centralismo." },
+            { question: "El Poder Legislativo en México, encargado de crear y modificar las leyes, está depositado en:", options: ["El Presidente de la República.", "La Suprema Corte de Justicia de la Nación.", "El Congreso de la Unión (Cámara de Diputados y Senadores).", "Los gobernadores de los estados."], correct: "El Congreso de la Unión (Cámara de Diputados y Senadores).", justification: "El Congreso de la Unión es el órgano bicameral que ostenta el poder legislativo a nivel federal, representando al pueblo y a las entidades federativas." },
+            { question: "La soberanía nacional, según el artículo 39 de la Constitución, reside esencial y originariamente en:", options: ["El presidente", "El ejército", "Los partidos políticos", "El pueblo"], correct: "El pueblo", justification: "Este artículo establece que todo poder público emana del pueblo y se instituye para beneficio de éste. El pueblo tiene en todo tiempo el inalienable derecho de alterar o modificar la forma de su gobierno." },
+            { question: "Mecanismo fundamental de la democracia a través del cual los ciudadanos eligen a sus representantes.", options: ["Los impuestos", "Las encuestas", "El voto libre y secreto", "Los debates públicos"], correct: "El voto libre y secreto", justification: "El sufragio (voto) es el principal instrumento de la participación ciudadana en una democracia representativa, permitiendo elegir y ser electo para cargos públicos." },
+            { question: "La Constitución Política de los Estados Unidos Mexicanos es la __________ del país.", options: ["Primera ley creada", "Única ley existente", "Ley Suprema", "Propuesta de ley"], correct: "Ley Suprema", justification: "La Constitución es la norma fundamental o 'ley de leyes'. Ninguna otra ley, tratado o disposición puede contradecirla. Establece la organización del Estado y los derechos fundamentales." },
+            { question: "Cuando se dice que México es una república laica, significa que:", options: ["El Estado prohíbe todas las religiones.", "El Estado tiene una religión oficial.", "El Estado es independiente de cualquier organización religiosa.", "Las iglesias gobiernan junto con el Estado."], correct: "El Estado es independiente de cualquier organización religiosa.", justification: "El laicismo garantiza la separación entre la Iglesia y el Estado, la libertad de conciencia y de religión, y asegura que el gobierno no se base en dogmas religiosos." },
+            { question: "Los partidos políticos son entidades de interés público que tienen como fin principal:", options: ["Organizar eventos sociales y culturales.", "Promover la participación del pueblo en la vida democrática.", "Controlar los medios de comunicación.", "Administrar las empresas del Estado."], correct: "Promover la participación del pueblo en la vida democrática.", justification: "La función principal de los partidos es organizar a los ciudadanos con ideas afines, proponer candidatos y programas de gobierno, y servir como un canal para la participación política en una democracia." },
+            
+            // Más Preguntas Variadas
+            { question: "¿Qué artículo de la Constitución Mexicana establece el derecho a la educación laica y gratuita?", options: ["Artículo 1°", "Artículo 3°", "Artículo 27", "Artículo 123"], correct: "Artículo 3°", justification: "El Artículo 3° es el fundamento del sistema educativo nacional, estableciendo que la educación impartida por el Estado debe ser laica, gratuita, obligatoria y de calidad." },
+            { question: "La capacidad de comunicar nuestras ideas y defender nuestros derechos respetando a los demás se llama:", options: ["Agresividad", "Pasividad", "Asertividad", "Manipulación"], correct: "Asertividad", justification: "La asertividad es el punto medio entre la pasividad (no defender los propios derechos) y la agresividad (violar los derechos de los demás). Es una habilidad de comunicación clave." },
+            { question: "Una sociedad democrática valora la pluralidad, lo que significa que:", options: ["Todos deben pensar de la misma manera.", "Solo hay un partido político permitido.", "Se reconoce y respeta la existencia de diversas ideas y grupos.", "Las decisiones las toma una sola persona."], correct: "Se reconoce y respeta la existencia de diversas ideas y grupos.", justification: "La pluralidad es la diversidad de opiniones, intereses, culturas y organizaciones que conviven en una democracia. Es lo opuesto a una visión única o totalitaria." },
+            { question: "El diálogo requiere de una actitud de ___________ para poder comprender los argumentos de la otra persona.", options: ["Indiferencia", "Competencia", "Escucha activa", "Confrontación"], correct: "Escucha activa", justification: "La escucha activa no es solo oír, sino prestar atención, comprender, analizar y responder de manera empática a lo que el otro está comunicando, lo cual es esencial para un diálogo constructivo." },
+            { question: "El principio de legalidad establece que:", options: ["Las autoridades pueden hacer todo lo que no esté prohibido.", "Los ciudadanos deben obedecer incluso las leyes injustas.", "Las autoridades solo pueden hacer aquello que la ley les permite expresamente.", "Las leyes pueden aplicarse retroactivamente."], correct: "Las autoridades solo pueden hacer aquello que la ley les permite expresamente.", justification: "Este principio es una garantía para los ciudadanos, ya que limita el poder de la autoridad a lo que está estrictamente facultado por la ley, evitando la arbitrariedad." },
+            { question: "La interculturalidad se diferencia del multiculturalismo en que la primera implica:", options: ["La simple coexistencia de culturas.", "La asimilación de las culturas minoritarias.", "La interacción, el diálogo y el enriquecimiento mutuo entre culturas.", "La separación de las culturas para evitar conflictos."], correct: "La interacción, el diálogo y el enriquecimiento mutuo entre culturas.", justification: "Mientras el multiculturalismo describe la coexistencia, la interculturalidad va un paso más allá y promueve una relación dinámica de intercambio y aprendizaje entre las diferentes culturas." },
+            { question: "La corrupción es un acto que atenta principalmente contra los valores de:", options: ["Honestidad y justicia", "Lealtad y amistad", "Creatividad y originalidad", "Tolerancia y paciencia"], correct: "Honestidad y justicia", justification: "La corrupción implica el abuso de poder para beneficio privado, violando la confianza pública (deshonestidad) y otorgando ventajas indebidas (injusticia)." },
+            { question: "Es una responsabilidad de los ciudadanos en una democracia:", options: ["Obedecer ciegamente a los gobernantes.", "Pagar impuestos y respetar las leyes.", "Votar por el partido que está en el poder.", "Criticar al gobierno sin proponer soluciones."], correct: "Pagar impuestos y respetar las leyes.", justification: "Así como los ciudadanos tienen derechos, también tienen responsabilidades para el buen funcionamiento de la sociedad, como contribuir al gasto público (impuestos) y acatar el marco legal." },
+            { question: "El concepto de 'Estado de Derecho' implica que:", options: ["El Estado está por encima de la ley.", "Nadie, ni siquiera los gobernantes, está por encima de la ley.", "La ley solo se aplica a los ciudadanos, no al gobierno.", "El derecho más importante es el del Estado."], correct: "Nadie, ni siquiera los gobernantes, está por encima de la ley.", justification: "El Estado de Derecho es el principio en el que todos los miembros de una sociedad, incluidos los que están en el gobierno, se consideran igualmente sujetos a códigos y procesos legales divulgados públicamente." },
+            { question: "La transparencia y la rendición de cuentas son mecanismos para:", options: ["Aumentar el poder de los funcionarios.", "Controlar el poder público y prevenir la corrupción.", "Ocultar información a los ciudadanos.", "Facilitar la reelección de los gobernantes."], correct: "Controlar el poder público y prevenir la corrupción.", justification: "La transparencia obliga al gobierno a hacer pública su información y la rendición de cuentas lo obliga a justificar sus decisiones y acciones, permitiendo el control ciudadano y combatiendo la opacidad y la corrupción." },
+            { question: "Cuando un juez toma una decisión basándose en las leyes existentes, sin dejarse llevar por sus emociones o prejuicios, está actuando con:", options: ["Parcialidad", "Imparcialidad", "Subjetividad", "Arbitrariedad"], correct: "Imparcialidad", justification: "La imparcialidad es un principio fundamental de la justicia que exige que las decisiones se tomen con base en criterios objetivos (la ley) y no en intereses personales, prejuicios o favoritismos." },
+            { question: "Son ejemplos de grupos de pertenencia que influyen en la identidad de un adolescente:", options: ["El sistema solar y la galaxia.", "El gobierno federal y los poderes de la Unión.", "La familia, los amigos y el equipo deportivo.", "Los personajes de una serie de televisión."], correct: "La familia, los amigos y el equipo deportivo.", justification: "Los grupos de pertenencia son aquellos con los que una persona se identifica y comparte valores, normas y costumbres. La familia y los amigos son los grupos primarios más influyentes en la adolescencia." },
+            { question: "Elige la opción que describe una norma moral.", options: ["No pasar un semáforo en rojo.", "Saludar al llegar a un lugar.", "Ser honesto y no mentir.", "Pagar la entrada para ir al cine."], correct: "Ser honesto y no mentir.", justification: "Las normas morales son internas, autónomas y su incumplimiento genera remordimiento o culpa personal, pero no una sanción externa. La honestidad es un valor moral." },
+            { question: "El derecho a la privacidad protege:", options: ["El derecho a tener secretos frente al gobierno.", "La vida personal, familiar y los datos personales de intromisiones.", "El derecho a no pagar impuestos.", "La libertad de no seguir ninguna ley."], correct: "La vida personal, familiar y los datos personales de intromisiones.", justification: "Este derecho garantiza que aspectos de la vida privada de una persona, su correspondencia y sus datos personales no sean invadidos o divulgados arbitrariamente." },
+            { question: "Un estereotipo es:", options: ["Una celebración cultural tradicional.", "Una ley que protege a las minorías.", "Una imagen o idea simplificada y generalizada sobre un grupo de personas.", "Un tipo de gobierno democrático."], correct: "Una imagen o idea simplificada y generalizada sobre un grupo de personas.", justification: "Los estereotipos son creencias generalizadas y a menudo inexactas sobre cómo son los miembros de un grupo, y pueden llevar a la formación de prejuicios y a la discriminación." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                questionsData.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+
+                    const shuffledOptions = shuffle([...q.options]);
+
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+
+                questionsData.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+
+                    if (isCorrect) score++;
+
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4>
+                                        <p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) {
+                        feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`;
+                    }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+
+                scoreEl.textContent = `Tu calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function resetExam() {
+                examForm.reset();
+                resultsContainer.classList.add('hidden');
+                examForm.classList.remove('hidden');
+                initExam();
+                window.scrollTo(0, 0);
+            }
+
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+
+</body>
+</html>

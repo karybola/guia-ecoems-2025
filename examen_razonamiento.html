@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - Razonamiento Matemático</title>
+    <style>
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --color-acento: #FFC107;
+            --color-correcto: #28a745;
+            --color-incorrecto: #dc3545;
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-blanco: #ffffff;
+            --sombra-caja: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--color-fondo); color: var(--color-texto); line-height: 1.6; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background-color: var(--color-blanco); padding: 25px 40px; border-radius: 12px; box-shadow: var(--sombra-caja); }
+        header { text-align: center; border-bottom: 2px solid var(--neptur-azul-primario); padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { color: var(--neptur-azul-secundario); margin: 0; }
+        header p { color: #666; font-size: 1.1em; }
+        .question-block { margin-bottom: 35px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0; }
+        .question-block p { font-weight: 600; font-size: 1.1em; margin-bottom: 15px; }
+        .options-container label { display: block; background-color: #f8f9fa; border: 1px solid #ddd; padding: 12px 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; }
+        .options-container label:hover { background-color: #e9ecef; border-color: var(--neptur-azul-primario); }
+        .options-container input[type="radio"] { margin-right: 12px; transform: scale(1.2); accent-color: var(--neptur-azul-primario); }
+        .button-container { text-align: center; margin-top: 30px; }
+        button, .back-link { background-color: var(--neptur-azul-primario); color: var(--color-blanco); border: none; padding: 15px 30px; font-size: 1.1em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; margin: 5px; text-decoration: none; display: inline-block; }
+        button:hover, .back-link:hover { background-color: var(--neptur-azul-secundario); transform: translateY(-2px); }
+        #resetBtn { background-color: #6c757d; }
+        #resetBtn:hover { background-color: #5a6268; }
+        .hidden { display: none; }
+        #results { padding-top: 20px; }
+        #score { font-size: 2em; text-align: center; color: var(--color-blanco); background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario)); padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .feedback-item { margin-bottom: 25px; padding: 20px; border-radius: 8px; border-left-width: 6px; border-left-style: solid; }
+        .feedback-item.correct { border-left-color: var(--color-correcto); background-color: #e9f7ef; }
+        .feedback-item.incorrect { border-left-color: var(--color-incorrecto); background-color: #fdeded; }
+        .feedback-item h4 { margin-top: 0; font-weight: bold; }
+        .feedback-item p { margin-bottom: 8px; }
+        .justification { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; font-style: italic; color: #555; }
+        .back-link { font-size: 1em; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Simulacro ECOEMS 2025: Razonamiento Matemático</p>
+        </header>
+
+        <form id="examForm">
+            <div id="questionsContainer">
+                <!-- Las preguntas se cargarán aquí -->
+            </div>
+            <div class="button-container">
+                <button type="submit">Calificar Examen</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2 id="score"></h2>
+            <div id="feedbackContainer"></div>
+            <div class="button-container">
+                <button id="resetBtn">Volver a Intentar</button>
+                <a href="guia_neptur.html" class="back-link">Volver al Menú Principal</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionsData = [
+                // Series Numéricas
+                { question: "¿Qué número continúa la serie: 5, 8, 12, 17, 23, ...?", options: ["30", "29", "31", "28"], correct: "30", justification: "La diferencia entre los números aumenta en 1 cada vez: +3, +4, +5, +6. El siguiente aumento es +7. Por lo tanto, 23 + 7 = 30." },
+                { question: "Identifica el número que rompe el patrón en la siguiente serie: 2, 4, 8, 16, 30, 64.", options: ["8", "16", "30", "64"], correct: "30", justification: "La serie es una progresión geométrica donde cada término es el doble del anterior (2, 4, 8, 16, 32, 64). El número 30 rompe este patrón." },
+                { question: "Encuentra los dos números que continúan la serie: 80, 75, 71, 66, 62, ...", options: ["57, 53", "58, 53", "57, 52", "58, 54"], correct: "57, 53", justification: "El patrón de resta es alternado: -5, -4, -5, -4. El siguiente es -5 (62-5=57) y luego -4 (57-4=53)." },
+                { question: "¿Cuál es el siguiente número en la secuencia: 1, 1, 2, 3, 5, 8, 13, ...?", options: ["20", "21", "18", "24"], correct: "21", justification: "Es la Sucesión de Fibonacci, donde cada número es la suma de los dos anteriores. 8 + 13 = 21." },
+                { question: "Completa la serie: 1/2, 1, 3/2, 2, 5/2, ...", options: ["3", "7/2", "4", "5"], correct: "3", justification: "La serie aumenta en 1/2 (o 0.5) en cada paso. 5/2 es 2.5, el siguiente número es 2.5 + 0.5 = 3." },
+                { question: "Determina el valor que falta en: 4, 9, 16, 25, __, 49.", options: ["36", "35", "30", "42"], correct: "36", justification: "La serie corresponde a los cuadrados de números consecutivos: 2², 3², 4², 5². El número que falta es 6², que es 36." },
+                { question: "Encuentra el término que sigue en la serie: 2A, 4D, 8G, 16J, ...", options: ["32L", "32M", "24L", "64M"], correct: "32M", justification: "La parte numérica se duplica cada vez (2, 4, 8, 16, 32). La parte de las letras avanza 3 posiciones en el abecedario (A -> D -> G -> J -> M)." },
+                { question: "Qué número continúa la serie: 100, 97, 91, 82, 70, ...?", options: ["55", "58", "52", "60"], correct: "55", justification: "La cantidad que se resta aumenta en 3 cada vez: -3, -6, -9, -12. La siguiente resta es -15.  70 - 15 = 55." },
+
+                // Analogías y Relaciones
+                { question: "Completa la analogía: ABEJA es a ENJAMBRE como LOBO es a ...", options: ["MANADA", "CARDUMEN", "REBAÑO", "BANDA"], correct: "MANADA", justification: "La analogía es de individuo a su sustantivo colectivo. Un grupo de lobos es una manada." },
+                { question: "Si ZAPATO es a 15, y CASA es a 1, ¿a qué es igual LAPIZ?", options: ["0", "15", "9", "6"], correct: "9", justification: "La clave está en la posición de la primera letra en el abecedario, pero con un cálculo. Z(26) -> 2+6=8 (no es). Probemos con valor de letras. Z(26)+A(1)+P(16)+A(1)+T(20)+O(15) no da 15. La clave es el número de consonantes por el número de vocales: ZAPATO -> 3 consonantes (Z,P,T), 3 vocales (A,A,O). 3x5=15. No, ZAPATO, 3 cons (ZPT), 3 vocales (AAO), 3*3=9. Tampoco.  Revisando. ZAPATO. Posición de la primera vocal A(1), O(15). 1x15=15. CASA. Primera vocal A(1), última A(1). 1x1=1.  LAPIZ. Primera vocal A(1), última I(9). 1x9=9." },
+                { question: "Agua es a Hielo como Vapor es a...", options: ["Líquido", "Agua", "Gas", "Fuego"], correct: "Agua", justification: "La relación es de un estado de la materia a su estado anterior (más frío/denso). El hielo proviene del agua líquida. El vapor proviene del agua líquida al calentarse. La relación es hacia el estado base." },
+                { question: "Si un cuadrado es a un cubo, entonces un círculo es a...", options: ["Una esfera", "Un cilindro", "Un cono", "Una elipse"], correct: "Una esfera", justification: "La relación es de una figura plana (2D) a su contraparte tridimensional (3D) por revolución o extrusión simétrica. Un cubo es la versión 3D de un cuadrado, y una esfera es la versión 3D de un círculo." },
+
+                // Problemas de Razonamiento Lógico-Matemático
+                { question: "En una caja hay 10 fichas rojas, 12 azules y 8 verdes. ¿Cuál es el número mínimo de fichas que debes sacar, sin ver, para estar seguro de tener al menos una de cada color?", options: ["23", "21", "20", "19"], correct: "23", justification: "En el peor de los casos, sacarías todas las fichas de los dos colores más numerosos primero. Sacarías las 12 azules y las 10 rojas (12 + 10 = 22). La siguiente ficha, la número 23, sería forzosamente verde, garantizando una de cada color." },
+                { question: "Si Ana es mayor que Beto y Carlos es menor que Ana pero mayor que Beto, ¿quién es el menor de los tres?", options: ["Ana", "Beto", "Carlos", "No se puede saber"], correct: "Beto", justification: "El orden de edad, de mayor a menor, es Ana > Carlos > Beto. Por lo tanto, el menor de los tres es Beto." },
+                { question: "Un tren sale de la ciudad A a las 8:00 a.m. y viaja a 60 km/h. Otro tren sale de la ciudad B a las 9:00 a.m. y viaja hacia A a 90 km/h. Si la distancia entre A y B es de 360 km, ¿a qué hora se encontrarán?", options: ["10:00 a.m.", "11:00 a.m.", "12:00 p.m.", "1:00 p.m."], correct: "11:00 a.m.", justification: "A las 9:00 a.m., el primer tren ya ha recorrido 60 km. La distancia restante entre ellos es 300 km. Su velocidad combinada es 60+90=150 km/h. Tardarán 300km/150km/h = 2 horas en encontrarse. Se encontrarán 2 horas después de las 9:00 a.m., es decir, a las 11:00 a.m." },
+                { question: "En una clase de 30 alumnos, 18 juegan fútbol y 15 juegan baloncesto. Si 5 alumnos no juegan ninguno de los dos deportes, ¿cuántos juegan ambos?", options: ["5", "8", "3", "10"], correct: "8", justification: "Si 5 no juegan nada, entonces 30-5=25 alumnos juegan al menos un deporte. Usando la fórmula de conjuntos: Total = Fútbol + Baloncesto - Ambos.  25 = 18 + 15 - Ambos.  25 = 33 - Ambos. Despejando, Ambos = 33 - 25 = 8." },
+                { question: "Tres amigos se reparten $1,200. El primero recibe el doble que el segundo, y el tercero recibe $100 más que el segundo. ¿Cuánto recibe el segundo amigo?", options: ["$275", "$300", "$550", "$375"], correct: "$275", justification: "Sea S la cantidad del segundo. El primero recibe 2S, el segundo S, y el tercero S+100. La suma es 2S + S + (S+100) = 1200.  4S + 100 = 1200.  4S = 1100.  S = 1100/4 = 275." },
+                { question: "Si se necesitan 2 personas para pintar una casa en 6 días, ¿cuántas personas se necesitarían para pintarla en solo 1 día?", options: ["12", "8", "6", "10"], correct: "12", justification: "Es una proporción inversa. El total de 'días-persona' de trabajo es 2 personas × 6 días = 12 días-persona. Para hacerlo en 1 día, se necesitan 12 / 1 = 12 personas." },
+                { question: "Un libro y una pluma cuestan $110 en total. El libro cuesta $100 más que la pluma. ¿Cuánto cuesta la pluma?", options: ["$10", "$5", "$15", "$100"], correct: "$5", justification: "Sea L el costo del libro y P el de la pluma. L+P=110 y L=P+100. Sustituyendo: (P+100)+P=110 -> 2P+100=110 -> 2P=10 -> P=5. La pluma cuesta $5 y el libro $105." },
+                { question: "En una carrera, si adelantas al segundo lugar, ¿en qué lugar quedas?", options: ["Primer lugar", "Segundo lugar", "Tercer lugar", "Depende"], correct: "Segundo lugar", justification: "Es un acertijo lógico. Al adelantar a la persona que va en segundo lugar, tú ocupas su posición. El que iba en primero sigue adelante." },
+                { question: "Un granjero tiene 17 ovejas. Todas mueren excepto 9. ¿Cuántas ovejas le quedan?", options: ["17", "8", "9", "Ninguna"], correct: "9", justification: "Es un juego de palabras. La frase clave es 'Todas mueren EXCEPTO 9'. Esto significa que le quedan 9 ovejas vivas." },
+                { question: "Si la aguja de un reloj marca las 3:40, ¿qué ángulo forman las manecillas?", options: ["120°", "130°", "140°", "150°"], correct: "130°", justification: "A las 3:40, la manecilla de los minutos está en el 8 (8*30°=240°). La manecilla de las horas está entre el 3 y el 4. Su posición es (3*30°) + (40/60)*30° = 90° + 20° = 110°. La diferencia es 240° - 110° = 130°." },
+                
+                // Más preguntas variadas de lógica y razonamiento
+                { question: "¿Qué par de números completa la analogía? 8 es a 64 como 9 es a __. Y 7 es a 49 como 11 es a __.", options: ["81, 121", "72, 110", "18, 22", "81, 110"], correct: "81, 121", justification: "La relación es n es a n². Por lo tanto, 9 es a 9² (81) y 11 es a 11² (121)." },
+                { question: "Un artículo se vende en $450 después de aplicarle un 10% de descuento. ¿Cuál era su precio original?", options: ["$500", "$495", "$405", "$400"], correct: "$500", justification: "Si se le aplicó un 10% de descuento, el precio de venta ($450) representa el 90% del precio original (P). La ecuación es 0.90 × P = 450. Despejando, P = 450 / 0.90 = $500." },
+                { question: "En un mapa, 1 cm representa 50 km. Si dos ciudades están separadas por 4.5 cm en el mapa, ¿cuál es la distancia real?", options: ["225 km", "200 km", "250 km", "450 km"], correct: "225 km", justification: "Es una proporción directa. Se multiplica la distancia en el mapa por la escala: 4.5 cm × 50 km/cm = 225 km." },
+                { question: "Si un evento tiene 3 posibles resultados (A, B, C) con P(A)=0.4 y P(B)=0.25, ¿cuál es la probabilidad del resultado C?", options: ["0.35", "0.65", "0.1", "No se puede saber"], correct: "0.35", justification: "La suma de las probabilidades de todos los resultados posibles debe ser 1. P(C) = 1 - P(A) - P(B) = 1 - 0.4 - 0.25 = 0.35." },
+                { question: "Completa la analogía: Triángulo es a 3 como __ es a 8.", options: ["Cubo", "Hexágono", "Octágono", "Círculo"], correct: "Octágono", justification: "La relación es 'figura geométrica' es a 'su número de lados/vértices'. Un octágono es la figura que tiene 8 lados." },
+                { question: "Una encuesta a 100 personas reveló que 60 leen la revista A y 50 leen la revista B. Si 20 leen ambas, ¿cuántas personas no leen ninguna?", options: ["10", "20", "30", "0"], correct: "10", justification: "Quienes leen al menos una revista son: (Solo A) + (Solo B) + (Ambos) = (60-20) + (50-20) + 20 = 40 + 30 + 20 = 90. Del total de 100 personas, 100 - 90 = 10 no leen ninguna." },
+                { question: "Si un coche puede recorrer 150 km en 2 horas, ¿cuánto tiempo le tomará recorrer 450 km a la misma velocidad?", options: ["6 horas", "5 horas", "8 horas", "4 horas"], correct: "6 horas", justification: "Primero calculamos la velocidad: 150 km / 2 h = 75 km/h. Luego calculamos el tiempo para la nueva distancia: 450 km / 75 km/h = 6 horas." },
+                { question: "Determina el término que falta en la serie: Z, X, U, Q, L, ...", options: ["G", "F", "H", "E"], correct: "F", justification: "La serie retrocede en el abecedario un número creciente de posiciones: Z (-2) X (-3) U (-4) Q (-5) L. El siguiente paso es retroceder 6 posiciones desde L: L, K, J, I, H, G, F. La letra es F." },
+                { question: "De un grupo de 5 hombres y 4 mujeres, se quiere formar un comité de 3 personas. ¿De cuántas maneras se puede formar si debe haber exactamente 2 hombres y 1 mujer?", options: ["40", "12", "84", "30"], correct: "40", justification: "Es un problema de combinaciones. Se eligen 2 hombres de 5 (C(5,2)) y 1 mujer de 4 (C(4,1)). C(5,2) = 10. C(4,1) = 4. El total de maneras es el producto: 10 × 4 = 40." },
+                { question: "La edad promedio de 4 hermanos es 15 años. Si se une su primo de 20 años, ¿cuál es la nueva edad promedio del grupo?", options: ["16 años", "17 años", "15.5 años", "18 años"], correct: "16 años", justification: "La suma de las edades de los 4 hermanos es 4 × 15 = 15 = 60 años. Al unirse el primo, la nueva suma de edades es 60 + 20 = 80 años. El nuevo promedio es 80 / 5 personas = 16 años." },
+                { question: "Un auto viaja la primera mitad de un trayecto a 40 km/h y la segunda mitad a 60 km/h. ¿Cuál es su velocidad promedio en todo el trayecto?", options: ["50 km/h", "48 km/h", "52 km/h", "No se puede saber"], correct: "48 km/h", justification: "No es el promedio simple. Se usa la media armónica. V_prom = 2 / ( (1/v1) + (1/v2) ) = 2 / ( (1/40) + (1/60) ) = 2 / ( (3+2)/120 ) = 2 / (5/120) = 2 × 120 / 5 = 240 / 5 = 48 km/h." },
+                { question: "Si A es 25% de B, ¿qué porcentaje es B de A?", options: ["400%", "25%", "75%", "125%"], correct: "400%", justification: "La ecuación es A = 0.25B. Para encontrar B en términos de A, despejamos: B = A / 0.25. Dividir entre 0.25 es lo mismo que multiplicar por 4. B = 4A. Por lo tanto, B es el 400% de A." },
+                { question: "Encuentra la letra que sigue en la serie: B, E, I, N, ...", options: ["T", "S", "U", "R"], correct: "T", justification: "La serie se basa en las posiciones del abecedario. B(2), E(5), I(9), N(14). Las diferencias son +3, +4, +5. La siguiente diferencia es +6. La posición 14 + 6 = 20, que corresponde a la letra T." },
+            ];
+            
+            // Lógica del examen (no necesita cambios)
+            const examForm = document.getElementById('examForm');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('results');
+            const scoreEl = document.getElementById('score');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const resetBtn = document.getElementById('resetBtn');
+            let originalQuestionOrder = [];
+            function shuffle(array) { let currentIndex = array.length, randomIndex; while (currentIndex !== 0) { randomIndex = Math.floor(Math.random() * currentIndex); currentIndex--;[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]; } return array; }
+            function initExam() {
+                questionsContainer.innerHTML = '';
+                originalQuestionOrder = [];
+                const shuffledQuestions = shuffle([...questionsData]);
+                shuffledQuestions.forEach((q, index) => {
+                    originalQuestionOrder.push(q);
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+                    const questionText = document.createElement('p');
+                    questionText.innerHTML = `<strong>${index + 1}.</strong> ${q.question}`;
+                    questionBlock.appendChild(questionText);
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+                    const shuffledOptions = shuffle([...q.options]);
+                    shuffledOptions.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `q${index}`;
+                        radio.value = option;
+                        radio.required = true;
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(` ${option}`));
+                        optionsContainer.appendChild(label);
+                    });
+                    questionBlock.appendChild(optionsContainer);
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+            function handleSubmit(e) {
+                e.preventDefault();
+                let score = 0;
+                feedbackContainer.innerHTML = '';
+                const formData = new FormData(examForm);
+                originalQuestionOrder.forEach((q, index) => {
+                    const userAnswer = formData.get(`q${index}`);
+                    const isCorrect = userAnswer === q.correct;
+                    if (isCorrect) score++;
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                    let feedbackHTML = `<h4>${index + 1}. ${q.question}</h4><p>Tu respuesta: <strong>${userAnswer || 'No respondida'}</strong> ${isCorrect ? '✔️' : '❌'}</p>`;
+                    if (!isCorrect) { feedbackHTML += `<p>Respuesta correcta: <strong>${q.correct}</strong></p>`; }
+                    feedbackHTML += `<div class="justification"><strong>Justificación:</strong> ${q.justification}</div>`;
+                    feedbackItem.innerHTML = feedbackHTML;
+                    feedbackContainer.appendChild(feedbackItem);
+                });
+                scoreEl.textContent = `Calificación: ${score} de ${questionsData.length}`;
+                examForm.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+            function resetExam() { examForm.reset(); resultsContainer.classList.add('hidden'); examForm.classList.remove('hidden'); initExam(); window.scrollTo(0, 0); }
+            examForm.addEventListener('submit', handleSubmit);
+            resetBtn.addEventListener('click', resetExam);
+            initExam();
+        });
+    </script>
+</body>
+</html>

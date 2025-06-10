@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva NEPTUR - ECOEMS 2025</title>
+    <style>
+        /* --- Variables de Color y Estilo --- */
+        :root {
+            --neptur-azul-primario: #005A9C;
+            --neptur-azul-secundario: #003F6E;
+            --neptur-acento: #FFC107; /* Un toque de color para resaltar */
+            --color-fondo: #f4f7f9;
+            --color-texto: #333;
+            --color-texto-secundario: #666;
+            --color-blanco: #ffffff;
+            --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --sombra-hover: 0 8px 25px rgba(0, 90, 156, 0.15);
+        }
+
+        /* --- Estilos Generales del Cuerpo --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            margin: 0;
+            padding: 25px;
+        }
+
+        /* --- Contenedor Principal --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- Encabezado --- */
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--neptur-azul-primario), var(--neptur-azul-secundario));
+            color: var(--color-blanco);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* --- Rejilla de Asignaturas --- */
+        .subject-grid {
+            display: grid;
+            /* Crea columnas flexibles que se adaptan al espacio disponible */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        /* --- Tarjeta de Asignatura --- */
+        .subject-card {
+            background-color: var(--color-blanco);
+            border-radius: 15px;
+            box-shadow: var(--sombra-suave);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Asegura que los bordes redondeados se apliquen bien */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--sombra-hover);
+        }
+
+        /* --- Área del Ícono en la Tarjeta --- */
+        .card-icon {
+            background-color: #e9f1f8; /* Un azul muy pálido */
+            text-align: center;
+            padding: 25px 20px;
+            font-size: 4.5rem; /* Tamaño grande para el emoji */
+        }
+        
+        /* --- Contenido de la Tarjeta --- */
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Permite que el contenido ocupe el espacio restante */
+        }
+
+        .card-content h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.25em;
+            color: var(--neptur-azul-secundario);
+        }
+
+        .card-content .card-meta {
+            margin: 0;
+            font-size: 0.9em;
+            color: var(--color-texto-secundario);
+            line-height: 1.5;
+        }
+
+        /* --- Diseño Responsivo --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .subject-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .subject-grid {
+                /* En pantallas muy pequeñas, forzamos 2 columnas para mejor aspecto */
+                grid-template-columns: 1fr 1fr;
+            }
+             .card-content h3 {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>Guía Interactiva NEPTUR</h1>
+            <p>Práctica para el examen ECOEMS 2025</p>
+        </header>
+
+        <main>
+            <div class="subject-grid">
+                
+                <!-- Tarjeta 1: Habilidad de razonamiento verbal -->
+                <a href="examen_espanol2.html" class="subject-card">
+                    <div class="card-icon">💡</div>
+                    <div class="card-content">
+                        <h3>Razonamiento Verbal</h3>
+                        <p class="card-meta">16 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+                <!-- Tarjeta 2: Español -->
+               <a href="examen_espanol.html" class="subject-card">
+                    <div class="card-icon">📚</div>
+                    <div class="card-content">
+                        <h3>Español</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+                <!-- Tarjeta 3: Historia -->
+                <a href="historia.html" class="subject-card">
+                    <div class="card-icon">🏛️</div>
+                    <div class="card-content">
+                        <h3>Historia</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+                <!-- Tarjeta 4: Geografía -->
+                 <a href="geografia.html" class="subject-card">
+                    <div class="card-icon">🗺️</div>
+                    <div class="card-content">
+                        <h3>Geografía</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+                <!-- Tarjeta 5: Formación cívica y ética -->
+                <a href="fcye.html" class="subject-card">
+                    <div class="card-icon">⚖️</div>
+                    <div class="card-content">
+                        <h3>Formación Cívica y Ética</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+                <!-- Tarjeta 6: Habilidad de razonamiento matemático -->
+                    <a href="examen_razonamiento.html" class="subject-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <h3>Razonamiento Matemático</h3>
+                        <p class="card-meta">16 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+                
+                <!-- Tarjeta 7: Matemáticas -->
+                    <a href="examen_matematicas.html" class="subject-card">
+                    <div class="card-icon">🧮</div>
+                    <div class="card-content">
+                        <h3>Matemáticas</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+                
+                <!-- Tarjeta 8: Física -->
+                 <a href="fisica.html" class="subject-card">
+                    <div class="card-icon">🍎</div>
+                    <div class="card-content">
+                        <h3>Física</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+                
+                <!-- Tarjeta 9: Química -->
+              <a href="quimica.html" class="subject-card">
+                    <div class="card-icon">🧪</div>
+                    <div class="card-content">
+                        <h3>Química</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+                <!-- Tarjeta 10: Biología -->
+               <a href="biologia.html" class="subject-card">
+                    <div class="card-icon">🧬</div>
+                    <div class="card-content">
+                        <h3>Biología</h3>
+                        <p class="card-meta">12 reactivos<br>Duración: 2 horas</p>
+                    </div>
+                </a>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
